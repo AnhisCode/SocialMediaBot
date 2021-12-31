@@ -23,6 +23,7 @@ public class App {
     private static String discordToken = "";
     private static String twitchToken = "";
     private static TwitchClient twitchClient;
+    public static JDABuilder jda;
 
     public static void main(String[] args) throws LoginException {
         //----------Discord setup----------
@@ -30,11 +31,10 @@ public class App {
             Dotenv dotenv = Dotenv.load();
             discordToken = dotenv.get("DISCORDTOKEN");
             twitchToken = dotenv.get("TWITCHTOKEN");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        JDABuilder jda = JDABuilder.createDefault(discordToken);
+        jda = JDABuilder.createDefault(discordToken);
         jda.setStatus(OnlineStatus.ONLINE);
         jda.addEventListeners(new Commands());
         jda.build();
@@ -43,9 +43,7 @@ public class App {
         // create user database
         if (Files.notExists(Paths.get("monitored_channel.db"))) {
             UpdateDB.createDB();
-            System.out.println("Created database");
         }
-
 
         //---------twitch setup-----------
 
@@ -66,7 +64,7 @@ public class App {
 
 
         // sets up the monitor for channels
-        for(String channel : channelName) {
+        for (String channel : channelName) {
             twitchClient.getChat().joinChannel(channel);
             twitchClient.getClientHelper().enableStreamEventListener(channel);
         }
@@ -105,7 +103,4 @@ public class App {
 
     }
 
-    public static TwitchClient getTwitchClient() {
-        return twitchClient;
-    }
 }

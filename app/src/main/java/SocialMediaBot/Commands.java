@@ -1,8 +1,13 @@
 package SocialMediaBot;
 
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import javax.security.auth.login.LoginException;
+import java.util.Objects;
 
 public class Commands extends ListenerAdapter {
 
@@ -11,9 +16,60 @@ public class Commands extends ListenerAdapter {
 
         // the server name
         String serverName = event.getGuild().getName();
+        String serverID = event.getGuild().getId();
+
+
+//        try {
+//            Guild server = App.jda.build().getGuildById(serverID);
+//        } catch (LoginException e) {
+//            e.printStackTrace();
+//        }
+
 
         // which text channel just got a message
         TextChannel textChannel = event.getTextChannel();
+        String channelID = textChannel.getId();
+
+        // which user texted
+        Member userRaw = event.getMember();
+        String username = Objects.requireNonNull(userRaw).getEffectiveName();
+        String userID = userRaw.getId();
+
+        // what is the content of their message
+        String userMessage = event.getMessage().getContentDisplay().toLowerCase();
+
+        if(userRaw.isOwner()){
+            String[] userCommand = userMessage.split(" ");
+            // add user command
+            if(Objects.equals(userCommand[0], "=>adduser")){
+                try
+                {
+                    String twitchUser = userCommand[1];
+                    boolean success = UpdateDB.addTwitchUser(serverName, serverID, textChannel.getName(), channelID, twitchUser);
+                    if(success)
+                        event.getChannel().sendMessage(String.format("User: %s added to monitored channels", twitchUser)).queue();
+                    else
+                        event.getChannel().sendMessage(String.format("User may have already been set up in this text channel", twitchUser)).queue();
+                } catch(IndexOutOfBoundsException e){
+                    event.getChannel().sendMessage("Please Mention a user to add").queue();
+                }
+            }
+            // remove user command
+            if(Objects.equals(userCommand[0], "=>removeuser")) {
+                try
+                {
+                    String twitchUser = userCommand[1];
+                    boolean success = UpdateDB.removeTwitchUser(serverID, channelID, twitchUser);
+                    if(success)
+                        event.getChannel().sendMessage(String.format("User: %s removed from monitored channels", twitchUser)).queue();
+                    else
+                        event.getChannel().sendMessage(String.format("Unknown error has occured", twitchUser)).queue();
+                } catch(IndexOutOfBoundsException e){
+                    event.getChannel().sendMessage("Please Mention a user to add").queue();
+                }
+            }
+
+        }
 
     }
 
