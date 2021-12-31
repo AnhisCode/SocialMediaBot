@@ -14,6 +14,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 
 import javax.security.auth.login.LoginException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class App {
 
@@ -22,11 +25,11 @@ public class App {
     private static TwitchClient twitchClient;
 
     public static void main(String[] args) throws LoginException {
+        //----------Discord setup----------
         try {
             Dotenv dotenv = Dotenv.load();
             discordToken = dotenv.get("DISCORDTOKEN");
             twitchToken = dotenv.get("TWITCHTOKEN");
-            System.out.println(twitchToken);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -36,8 +39,21 @@ public class App {
         jda.addEventListeners(new Commands());
         jda.build();
 
+        //----------DB setup----------
+        // create user database
+        if (Files.notExists(Paths.get("monitored_channel.db"))) {
+            UpdateDB.createDB();
+            System.out.println("Created database");
+        }
+
+
+        //---------twitch setup-----------
+
         OAuth2Credential credential = new OAuth2Credential("twitch", twitchToken);
-        String channelName = "anhiswow";
+
+        // list of channels to monitor
+        ArrayList<String> channelName = new ArrayList<>();
+        channelName.add("Ace1919191");
 
         // build the twitchClient class
         twitchClient = TwitchClientBuilder.builder()
@@ -48,36 +64,41 @@ public class App {
                 .withDefaultEventHandler(SimpleEventHandler.class)
                 .build();
 
+
+        // sets up the monitor for channels
+        for(String channel : channelName) {
+            twitchClient.getChat().joinChannel(channel);
+            twitchClient.getClientHelper().enableStreamEventListener(channel);
+        }
+
         // The monitored channel receives a message from a user
         twitchClient.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelMessageEvent.class, event ->
         {
             // which channel got the message
             String channel = event.getChannel().getName();
-
+            // user ID of the sender
+            String userID = event.getUser().getId();
             // username of the sender
             String userName = event.getUser().getName();
-
             // The sent message
             String message = event.getMessage();
 
-            System.out.println(userName + ": " + message);
+            System.out.println("[" + channel + "]" + userName + ": " + message);
         });
-
 
         // the monitored channel goes live
         twitchClient.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelGoLiveEvent.class, event ->
         {
             // name of the channel that just went live
             String channel = event.getChannel().getName();
-
             // Title of the stream
             String title = event.getStream().getTitle();
-
             // the url image of the stream
             String imageLink = event.getStream().getThumbnailUrl();
-
-            //name of the game being played
+            // name of the game being played
             String gameName = event.getStream().getGameName();
+            // Viewer count of the stream
+            int viewerCount = event.getStream().getViewerCount();
 
             System.out.printf("Channel: %s is Live! Playing %s\n%s%n", channel, gameName, title);
         });
