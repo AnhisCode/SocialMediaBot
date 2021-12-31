@@ -1,7 +1,5 @@
 package SocialMediaBot;
 
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -16,7 +14,7 @@ public class UpdateDB {
         try {
             connection = DriverManager.getConnection(url);
             Statement statement = connection.createStatement();
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+            statement.setQueryTimeout(30);
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS monitored_channels " +
                     "(serverName string, serverID string, channelName string, channelID string, twitchUserName string)");
             System.out.println("------------DB created------------");
@@ -85,7 +83,7 @@ public class UpdateDB {
         }
     }
 
-
+    // remove user command
     public static boolean removeTwitchUser(String serverID, String channelID, String twitchName){
         try {
             connection = DriverManager.getConnection(url);
@@ -115,4 +113,36 @@ public class UpdateDB {
 
     }
 
+
+    // get all channelID with user
+    public static ArrayList<String> getChannelID(String userName){
+        ArrayList<String> channelIDs = new ArrayList<>();
+
+        try {
+            connection = DriverManager.getConnection(url);
+            String insertStatement = "SELECT channelID FROM monitored_channels WHERE twitchUserName = ?";
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(insertStatement);
+            preparedStatement.setString(1, userName);
+            ResultSet idList = preparedStatement.executeQuery();
+
+            while(idList.next()){
+                channelIDs.add(idList.getString("channelID"));
+            }
+        } catch (Exception e) {
+            System.out.println("_________________________ERROR_________________________");
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+
+        return channelIDs;
+    }
 }

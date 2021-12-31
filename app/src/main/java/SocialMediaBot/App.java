@@ -12,6 +12,8 @@ import com.github.twitch4j.events.ChannelGoLiveEvent;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.security.auth.login.LoginException;
 import java.nio.file.Files;
@@ -51,7 +53,7 @@ public class App {
 
         // list of channels to monitor
         ArrayList<String> channelName = new ArrayList<>();
-        channelName.add("Ace1919191");
+        channelName.add("anhiswow");
 
         // build the twitchClient class
         twitchClient = TwitchClientBuilder.builder()
@@ -88,7 +90,7 @@ public class App {
         twitchClient.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelGoLiveEvent.class, event ->
         {
             // name of the channel that just went live
-            String channel = event.getChannel().getName();
+            String streamerName = event.getChannel().getName();
             // Title of the stream
             String title = event.getStream().getTitle();
             // the url image of the stream
@@ -98,7 +100,13 @@ public class App {
             // Viewer count of the stream
             int viewerCount = event.getStream().getViewerCount();
 
-            System.out.printf("Channel: %s is Live! Playing %s\n%s%n", channel, gameName, title);
+            ArrayList<String> channelIDList = UpdateDB.getChannelID(streamerName);
+
+            for(String channelID: channelIDList){
+                MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName);
+            }
+
+            System.out.printf("Channel: %s is Live! Playing %s\n%s%n", streamerName, gameName, title);
         });
 
     }

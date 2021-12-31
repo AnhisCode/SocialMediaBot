@@ -1,8 +1,10 @@
 package SocialMediaBot;
 
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -11,20 +13,19 @@ import java.util.Objects;
 
 public class Commands extends ListenerAdapter {
 
+    public static JDA jda;
+
+    @Override
+    public void onReady(ReadyEvent ev) {
+        jda = ev.getJDA();
+    }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event){
 
         // the server name
         String serverName = event.getGuild().getName();
         String serverID = event.getGuild().getId();
-
-
-//        try {
-//            Guild server = App.jda.build().getGuildById(serverID);
-//        } catch (LoginException e) {
-//            e.printStackTrace();
-//        }
-
 
         // which text channel just got a message
         TextChannel textChannel = event.getTextChannel();
