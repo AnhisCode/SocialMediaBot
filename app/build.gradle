@@ -23,9 +23,13 @@ dependencies {
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:30.1.1-jre'
     implementation group: 'io.github.cdimascio', name: 'java-dotenv', version: '5.2.2'
+    implementation group: 'com.github.twitch4j', name: 'twitch4j', version: '1.7.0'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.8'
+
 }
 
 application {
+
     // Define the main class for the application.
     mainClass = 'SocialMediaBot.App'
 }

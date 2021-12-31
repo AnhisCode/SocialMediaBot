@@ -3,6 +3,12 @@
  */
 package SocialMediaBot;
 
+import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
+import com.github.philippheuer.events4j.simple.SimpleEventHandler;
+import com.github.twitch4j.TwitchClient;
+import com.github.twitch4j.TwitchClientBuilder;
+import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import com.github.twitch4j.events.ChannelGoLiveEvent;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -11,20 +17,74 @@ import javax.security.auth.login.LoginException;
 
 public class App {
 
-    private static String token = "";
+    private static String discordToken = "";
+    private static String twitchToken = "";
+    private static TwitchClient twitchClient;
 
     public static void main(String[] args) throws LoginException {
         try {
             Dotenv dotenv = Dotenv.load();
-            token = dotenv.get("TOKEN");
+            discordToken = dotenv.get("DISCORDTOKEN");
+            twitchToken = dotenv.get("TWITCHTOKEN");
+            System.out.println(twitchToken);
         }
         catch (Exception e){
             e.printStackTrace();
         }
-        JDABuilder jda = JDABuilder.createDefault(token);
+        JDABuilder jda = JDABuilder.createDefault(discordToken);
         jda.setStatus(OnlineStatus.ONLINE);
         jda.addEventListeners(new Commands());
         jda.build();
+
+        OAuth2Credential credential = new OAuth2Credential("twitch", twitchToken);
+        String channelName = "anhiswow";
+
+        // build the twitchClient class
+        twitchClient = TwitchClientBuilder.builder()
+                .withDefaultAuthToken(credential)
+                .withChatAccount(credential)
+                .withEnableHelix(true)
+                .withEnableChat(true)
+                .withDefaultEventHandler(SimpleEventHandler.class)
+                .build();
+
+        // The monitored channel receives a message from a user
+        twitchClient.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelMessageEvent.class, event ->
+        {
+            // which channel got the message
+            String channel = event.getChannel().getName();
+
+            // username of the sender
+            String userName = event.getUser().getName();
+
+            // The sent message
+            String message = event.getMessage();
+
+            System.out.println(userName + ": " + message);
+        });
+
+
+        // the monitored channel goes live
+        twitchClient.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelGoLiveEvent.class, event ->
+        {
+            // name of the channel that just went live
+            String channel = event.getChannel().getName();
+
+            // Title of the stream
+            String title = event.getStream().getTitle();
+
+            // the url image of the stream
+            String imageLink = event.getStream().getThumbnailUrl();
+
+            //name of the game being played
+            String gameName = event.getStream().getGameName();
+
+            System.out.printf("Channel: %s is Live! Playing %s\n%s%n", channel, gameName, title);
+        });
+
     }
 
+    public static TwitchClient getTwitchClient() {
+        return twitchClient;
+    }
 }
