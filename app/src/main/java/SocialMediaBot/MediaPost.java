@@ -25,14 +25,14 @@ public class MediaPost {
         streamInfo.setDescription("**"+title+"**");
 
         if (channel != null) {
-            channel.sendMessage("Hey! @everyone").queue();
+            channel.sendMessage(":white_flower: Hey! @everyone :white_flower:").queue();
             channel.sendMessageEmbeds(streamInfo.build()).queue();
         }
         streamInfo.clear();
 
         // now send the leaderboard
         EmbedBuilder leaderboardInfo = new EmbedBuilder();
-        leaderboardInfo.setTitle("**"+userName + "'s Top 10 Chatters!!**");
+        leaderboardInfo.setTitle("**:speech_left:"+userName + "'s Top 10 Chatters!!:speech_left:**");
         leaderboardInfo.addField("#1 Viewer :first_place:", "placeHolder - 100 messages", true);
         leaderboardInfo.addField("#2 Viewer :second_place: ", "placeHolder - 80 messages", true);
         leaderboardInfo.addField("#3 Viewer :third_place:", "placeHolder - 70 messages", true);
