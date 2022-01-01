@@ -56,8 +56,6 @@ public class App {
         //---------twitch setup-----------
         OAuth2Credential credential = new OAuth2Credential("twitch", twitchToken);
 
-        // list of channels to monitor
-        channelName.add("anhiswow");
 
         // build the twitchClient class
         twitchClient = TwitchClientBuilder.builder()
@@ -69,7 +67,7 @@ public class App {
                 .build();
 
 
-        // sets up the monitor for channels
+        // sets up the channels to monitor
         channelName = UpdateDB.getMonitoredUsers();
         for (String channel : channelName) {
             twitchClient.getChat().joinChannel(channel);
@@ -88,7 +86,8 @@ public class App {
             // The sent message
             String message = event.getMessage();
 
-            System.out.println("[" + channel + "]" + userName + ": " + message);
+            UpdateDB.updateStreamerDB(userName,userID,channel);
+            //System.out.println("[" + channel + "]" + userName + ": " + message);
         });
 
         // the monitored channel goes live
