@@ -21,7 +21,7 @@ public class Commands extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event){
+    public void onMessageReceived(MessageReceivedEvent event) {
 
         // the server name
         String serverName = event.getGuild().getName();
@@ -36,36 +36,41 @@ public class Commands extends ListenerAdapter {
         String username = Objects.requireNonNull(userRaw).getEffectiveName();
         String userID = userRaw.getId();
 
+        if (username.equals("Anh")) {
+            MediaPost.embedTest(textChannel);
+        }
+
         // what is the content of their message
         String userMessage = event.getMessage().getContentDisplay().toLowerCase();
 
-        if(userRaw.isOwner()){
+        if (userRaw.isOwner()) {
             String[] userCommand = userMessage.split(" ");
             // add user command
-            if(Objects.equals(userCommand[0], "=>adduser")){
-                try
-                {
+            if (Objects.equals(userCommand[0], "=>adduser")) {
+                try {
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.addTwitchUser(serverName, serverID, textChannel.getName(), channelID, twitchUser);
-                    if(success)
+                    if (success) {
                         event.getChannel().sendMessage(String.format("User: %s added to monitored channels", twitchUser)).queue();
-                    else
+                        App.addMonitoredUser(twitchUser);
+                    } else
                         event.getChannel().sendMessage(String.format("User may have already been set up in this text channel", twitchUser)).queue();
-                } catch(IndexOutOfBoundsException e){
+                } catch (IndexOutOfBoundsException e) {
                     event.getChannel().sendMessage("Please Mention a user to add").queue();
                 }
             }
+
             // remove user command
-            if(Objects.equals(userCommand[0], "=>removeuser")) {
-                try
-                {
+            if (Objects.equals(userCommand[0], "=>removeuser")) {
+                try {
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.removeTwitchUser(serverID, channelID, twitchUser);
-                    if(success)
+                    if (success) {
                         event.getChannel().sendMessage(String.format("User: %s removed from monitored channels", twitchUser)).queue();
-                    else
+                        App.removeMonitoredUser(twitchUser);
+                    } else
                         event.getChannel().sendMessage(String.format("Unknown error has occured", twitchUser)).queue();
-                } catch(IndexOutOfBoundsException e){
+                } catch (IndexOutOfBoundsException e) {
                     event.getChannel().sendMessage("Please Mention a user to add").queue();
                 }
             }

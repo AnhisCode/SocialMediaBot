@@ -27,6 +27,9 @@ public class App {
     private static TwitchClient twitchClient;
     public static JDABuilder jda;
 
+    // list of channel to add
+    public static ArrayList<String> channelName = new ArrayList<>();
+
     public static void main(String[] args) throws LoginException {
         //----------Discord setup----------
         try {
@@ -48,11 +51,9 @@ public class App {
         }
 
         //---------twitch setup-----------
-
         OAuth2Credential credential = new OAuth2Credential("twitch", twitchToken);
 
         // list of channels to monitor
-        ArrayList<String> channelName = new ArrayList<>();
         channelName.add("anhiswow");
 
         // build the twitchClient class
@@ -66,6 +67,7 @@ public class App {
 
 
         // sets up the monitor for channels
+        channelName = UpdateDB.getMonitoredUsers();
         for (String channel : channelName) {
             twitchClient.getChat().joinChannel(channel);
             twitchClient.getClientHelper().enableStreamEventListener(channel);
@@ -109,6 +111,17 @@ public class App {
             System.out.printf("Channel: %s is Live! Playing %s\n%s%n", streamerName, gameName, title);
         });
 
+    }
+
+    // add new user to monitor
+    public static void addMonitoredUser(String userName){
+        twitchClient.getChat().joinChannel(userName);
+        twitchClient.getClientHelper().enableStreamEventListener(userName);
+    }
+
+    public static void removeMonitoredUser(String userName){
+        twitchClient.getChat().leaveChannel(userName);
+        twitchClient.getClientHelper().disableStreamEventListener(userName);
     }
 
 }

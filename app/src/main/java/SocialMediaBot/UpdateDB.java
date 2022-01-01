@@ -110,7 +110,6 @@ public class UpdateDB {
                 System.err.println(e.getMessage());
             }
         }
-
     }
 
 
@@ -142,7 +141,37 @@ public class UpdateDB {
                 System.err.println(e.getMessage());
             }
         }
-
         return channelIDs;
+    }
+
+
+    // get all channelID with user
+    public static ArrayList<String> getMonitoredUsers(){
+        ArrayList<String> monitoredUsers = new ArrayList<>();
+
+        try {
+            connection = DriverManager.getConnection(url);
+            String insertStatement = "SELECT twitchUserName FROM monitored_channels";
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(insertStatement);
+            ResultSet userList = preparedStatement.executeQuery();
+
+            while(userList.next()){
+                monitoredUsers.add(userList.getString("twitchUserName"));
+            }
+        } catch (Exception e) {
+            System.out.println("_________________________ERROR_________________________");
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return monitoredUsers;
     }
 }
