@@ -33,6 +33,7 @@ public class UpdateDB {
         }
     }
 
+    // add user command
     public static boolean addTwitchUser(String serverName, String serverID, String channelName, String channelID,String twitchName){
         try {
             connection = DriverManager.getConnection(url);

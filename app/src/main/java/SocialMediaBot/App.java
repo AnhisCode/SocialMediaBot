@@ -9,6 +9,8 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
+import com.github.twitch4j.helix.domain.User;
+import com.github.twitch4j.helix.domain.UserList;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -19,6 +21,7 @@ import javax.security.auth.login.LoginException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class App {
 
@@ -96,16 +99,21 @@ public class App {
             // Title of the stream
             String title = event.getStream().getTitle();
             // the url image of the stream
-            String imageLink = event.getStream().getThumbnailUrl();
+            String imageLink = event.getStream().getThumbnailUrl(1280, 720);
             // name of the game being played
             String gameName = event.getStream().getGameName();
             // Viewer count of the stream
             int viewerCount = event.getStream().getViewerCount();
 
+            // obtaining the url of the profile picture
+            UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList("anhiswow")).execute();
+            ArrayList<User> users = new ArrayList<>(resultList.getUsers());
+            String profileIconURL = users.get(0).getProfileImageUrl();
+
             ArrayList<String> channelIDList = UpdateDB.getChannelID(streamerName);
 
             for(String channelID: channelIDList){
-                MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName);
+                MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName,viewerCount,profileIconURL);
             }
 
             System.out.printf("Channel: %s is Live! Playing %s\n%s%n", streamerName, gameName, title);

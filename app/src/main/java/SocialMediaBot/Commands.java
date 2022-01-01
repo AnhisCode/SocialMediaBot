@@ -36,10 +36,6 @@ public class Commands extends ListenerAdapter {
         String username = Objects.requireNonNull(userRaw).getEffectiveName();
         String userID = userRaw.getId();
 
-        if (username.equals("Anh")) {
-            MediaPost.embedTest(textChannel);
-        }
-
         // what is the content of their message
         String userMessage = event.getMessage().getContentDisplay().toLowerCase();
 
@@ -50,7 +46,7 @@ public class Commands extends ListenerAdapter {
                 try {
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.addTwitchUser(serverName, serverID, textChannel.getName(), channelID, twitchUser);
-                    if (success) {
+                    if (success) { // works
                         event.getChannel().sendMessage(String.format("User: %s added to monitored channels", twitchUser)).queue();
                         App.addMonitoredUser(twitchUser);
                     } else
@@ -65,13 +61,13 @@ public class Commands extends ListenerAdapter {
                 try {
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.removeTwitchUser(serverID, channelID, twitchUser);
-                    if (success) {
+                    if (success) { // works
                         event.getChannel().sendMessage(String.format("User: %s removed from monitored channels", twitchUser)).queue();
                         App.removeMonitoredUser(twitchUser);
                     } else
                         event.getChannel().sendMessage(String.format("Unknown error has occured", twitchUser)).queue();
                 } catch (IndexOutOfBoundsException e) {
-                    event.getChannel().sendMessage("Please Mention a user to add").queue();
+                    event.getChannel().sendMessage("Please Mention a user to remove").queue();
                 }
             }
 
