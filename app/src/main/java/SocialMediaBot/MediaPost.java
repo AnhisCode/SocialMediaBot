@@ -19,7 +19,7 @@ import static java.util.Map.Entry.*;
 public class MediaPost {
 
     // post on discord when a user goes live
-    public static void discordNotifyLive(String channelID, String userName, String imageURL, String title, String gameName, int viewers, String profileIconURL) {
+    public static void discordNotifyLive(String channelID, String userName, String imageURL, String title, String gameName, String profileIconURL) {
 
         // TODO this works but make it prettier
         TextChannel channel = Commands.jda.getTextChannelById(channelID);
@@ -29,7 +29,6 @@ public class MediaPost {
         streamInfo.setThumbnail(profileIconURL);
         streamInfo.setImage(imageURL);
         streamInfo.addField("Game :video_game:", "Playing " + gameName, true);
-        streamInfo.addField("Viewers :people_holding_hands:", viewers + " viewers", true);
         streamInfo.addField("Watch now at :tv:", "https://www.twitch.tv/"+userName, true);
         streamInfo.setDescription("**"+title+"**");
 
@@ -41,7 +40,26 @@ public class MediaPost {
 
         // now send the leaderboard
         displayLeaderboard(channel, userName);
+    }
 
+
+    // post on discord when a user goes offline
+    public static void discordNotifyOffline(String channelID, String userName, String profileIconURL) {
+        TextChannel channel = Commands.jda.getTextChannelById(channelID);
+        EmbedBuilder streamInfo = new EmbedBuilder();
+        streamInfo.setTitle(":zzz:**"+userName + " Has Finished Streaming!!:zzz:**", "https://www.twitch.tv/"+userName);
+        streamInfo.setColor(0xFFC0CB);
+        streamInfo.setThumbnail(profileIconURL);
+        streamInfo.setDescription("**Thank you and otsukaresama deshita "+userName+"**\n Thanks everyone for tuning in!");
+        streamInfo.setFooter("Did you enjoy the stream?");
+
+        if (channel != null) {
+            channel.sendMessageEmbeds(streamInfo.build()).queue(message -> {
+                message.addReaction("U+2705").queue();
+                message.addReaction("U+274C").queue();
+            });
+        }
+        streamInfo.clear();
     }
 
 
@@ -64,7 +82,7 @@ public class MediaPost {
         }
 
         EmbedBuilder leaderboardInfo = new EmbedBuilder();
-        leaderboardInfo.setTitle("**:speech_left:"+ streamerName + "'s Top 10 Chatters!!:speech_left:**");
+        leaderboardInfo.setTitle("**"+ streamerName + "'s Top 10 Chatters!!**");
         leaderboardInfo.addField("#1 Viewer :first_place:", String.format("**%s** - %s messages",viewers.get(0), messageCount.get(0)), true);
         leaderboardInfo.addField("#2 Viewer :second_place: ", String.format("**%s** - %s messages",viewers.get(1), messageCount.get(1)), true);
         leaderboardInfo.addField("#3 Viewer :third_place:", String.format("**%s** - %s messages",viewers.get(2), messageCount.get(2)), true);

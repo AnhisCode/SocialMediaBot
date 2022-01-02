@@ -9,6 +9,7 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
+import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -110,10 +111,31 @@ public class App {
             ArrayList<String> channelIDList = UpdateDB.getChannelID(streamerName);
 
             for(String channelID: channelIDList){
-                MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName,viewerCount,profileIconURL);
+                MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName,profileIconURL);
             }
 
             System.out.printf("Channel: %s is Live! Playing %s\n%s%n", streamerName, gameName, title);
+        });
+
+
+        // monitored channel goes offline
+        twitchClient.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelGoOfflineEvent.class, event ->
+        {
+            // name of the channel that just went live
+            String streamerName = event.getChannel().getName();
+            // url of channel banner
+
+            // obtaining the url of the profile picture
+            UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList(streamerName)).execute();
+            ArrayList<User> users = new ArrayList<>(resultList.getUsers());
+            String profileIconURL = users.get(0).getProfileImageUrl();
+
+            ArrayList<String> channelIDList = UpdateDB.getChannelID(streamerName);
+
+            for(String channelID: channelIDList){
+                MediaPost.discordNotifyOffline(channelID,streamerName,profileIconURL);
+            }
+
         });
 
     }
