@@ -43,6 +43,7 @@ public class Commands extends ListenerAdapter {
         // leaderboard command
         if (Objects.equals(userCommand[0], "=>leaderboard")) {
             try {
+                System.out.printf("[%s][%s]%s:%s\n",serverName,textChannel.getName(),username,userMessage);
                 String twitchUser = userCommand[1];
                 MediaPost.displayLeaderboard(textChannel, twitchUser);
             } catch (IndexOutOfBoundsException e) {
@@ -54,6 +55,7 @@ public class Commands extends ListenerAdapter {
             // add user command
             if (Objects.equals(userCommand[0], "=>adduser")) {
                 try {
+                    System.out.printf("[%s][%s]%s:%s\n",serverName,textChannel.getName(),username,userMessage);
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.addTwitchUser(serverName, serverID, textChannel.getName(), channelID, twitchUser);
                     if (success) { // works
@@ -69,6 +71,7 @@ public class Commands extends ListenerAdapter {
             // remove user command
             if (Objects.equals(userCommand[0], "=>removeuser")) {
                 try {
+                    System.out.printf("[%s][%s]%s:%s\n",serverName,textChannel.getName(),username,userMessage);
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.removeTwitchUser(serverID, channelID, twitchUser);
                     if (success) { // works
