@@ -2,6 +2,8 @@ package SocialMediaBot;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class UpdateDB {
@@ -93,6 +95,48 @@ public class UpdateDB {
                 System.err.println(e.getMessage());
             }
         }
+    }
+
+
+    // return list of top viewer based on streamer
+    public static ArrayList<ArrayList> getViewerLeaderBoard(String streamerName){
+        ArrayList<ArrayList> viewerAndMessageCount = new ArrayList<>();
+        ArrayList<String> topViewer = new ArrayList<>();
+        ArrayList<Integer> messageCount = new ArrayList<>();
+        try {
+            connection = DriverManager.getConnection(url);
+            Statement statement = connection.createStatement();
+            //VALUES(twitchUserName, twitchID, messageCount, streamerName)");
+            ResultSet topList = statement.executeQuery("SELECT twitchUserName, messageCount FROM twitch_viewers WHERE " +
+                    "streamerName='"+streamerName+"' ORDER BY messageCount DESC LIMIT 10");
+            while(topList.next()){
+                topViewer.add(topList.getString("twitchUserName"));
+                messageCount.add(topList.getInt("messageCount"));
+            }
+
+            // fill up empty space if there are any
+            while(topViewer.size() < 3){
+                topViewer.add("None");
+                messageCount.add(0);
+            }
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+
+        viewerAndMessageCount.add(topViewer);
+        viewerAndMessageCount.add(messageCount);
+
+        return viewerAndMessageCount;
     }
 
 

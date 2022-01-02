@@ -3,9 +3,18 @@ package SocialMediaBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.checkerframework.checker.units.qual.A;
 
 import javax.security.auth.login.LoginException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
+
+import static java.util.Map.Entry.*;
 
 public class MediaPost {
 
@@ -31,14 +40,37 @@ public class MediaPost {
         streamInfo.clear();
 
         // now send the leaderboard
+        displayLeaderboard(channel, userName);
+
+    }
+
+
+    // display leaderboard
+    public static void displayLeaderboard(TextChannel channel, String streamerName){
+        ArrayList<ArrayList> topViewers = UpdateDB.getViewerLeaderBoard(streamerName);
+        ArrayList<String> viewers = new ArrayList<>();
+        ArrayList<Integer> messageCount = new ArrayList<>();
+
+        viewers = topViewers.get(0);
+        messageCount = topViewers.get(1);
+
+        // top 4 to 10
+        StringBuilder top4To10 = new StringBuilder();
+
+        // iterate over each map entry descending order
+        for (int i = viewers.size()-1; i > 2; i--) {
+            top4To10.insert(0, String.format("#%s: **%s** - %s Messages\n", i+1,
+                    viewers.get(i), messageCount.get(i)));
+        }
+
         EmbedBuilder leaderboardInfo = new EmbedBuilder();
-        leaderboardInfo.setTitle("**:speech_left:"+userName + "'s Top 10 Chatters!!:speech_left:**");
-        leaderboardInfo.addField("#1 Viewer :first_place:", "placeHolder - 100 messages", true);
-        leaderboardInfo.addField("#2 Viewer :second_place: ", "placeHolder - 80 messages", true);
-        leaderboardInfo.addField("#3 Viewer :third_place:", "placeHolder - 70 messages", true);
-        leaderboardInfo.addField("The Rest :medal:","-PlaceHolder-60\n-PlaceHolder-50\n-PlaceHolder-40\n-PlaceHolder-30\n-PlaceHolder-20\n",false);
+        leaderboardInfo.setTitle("**:speech_left:"+ streamerName + "'s Top 10 Chatters!!:speech_left:**");
+        leaderboardInfo.addField("#1 Viewer :first_place:", String.format("**%s** - %s messages",viewers.get(0), messageCount.get(0)), true);
+        leaderboardInfo.addField("#2 Viewer :second_place: ", String.format("**%s** - %s messages",viewers.get(1), messageCount.get(1)), true);
+        leaderboardInfo.addField("#3 Viewer :third_place:", String.format("**%s** - %s messages",viewers.get(2), messageCount.get(2)), true);
+        leaderboardInfo.addField("The Rest :medal:",top4To10.toString(),false);
         leaderboardInfo.setColor(0xFFC0CB);
-        leaderboardInfo.setFooter("Bot created by Anh :)");
+        leaderboardInfo.setFooter("Type: \"=>leaderboard "+streamerName+"\" to update this leaderboard :)");
 
         channel.sendMessageEmbeds(leaderboardInfo.build()).queue();
         leaderboardInfo.clear();

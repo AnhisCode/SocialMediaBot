@@ -38,9 +38,19 @@ public class Commands extends ListenerAdapter {
 
         // what is the content of their message
         String userMessage = event.getMessage().getContentDisplay().toLowerCase();
+        String[] userCommand = userMessage.split(" ");
+
+        // leaderboard command
+        if (Objects.equals(userCommand[0], "=>leaderboard")) {
+            try {
+                String twitchUser = userCommand[1];
+                MediaPost.displayLeaderboard(textChannel, twitchUser);
+            } catch (IndexOutOfBoundsException e) {
+                event.getChannel().sendMessage("Please Mention a monitored twitch streamer's username").queue();
+            }
+        }
 
         if (userRaw.isOwner()) {
-            String[] userCommand = userMessage.split(" ");
             // add user command
             if (Objects.equals(userCommand[0], "=>adduser")) {
                 try {
@@ -70,7 +80,6 @@ public class Commands extends ListenerAdapter {
                     event.getChannel().sendMessage("Please Mention a user to remove").queue();
                 }
             }
-
         }
 
     }

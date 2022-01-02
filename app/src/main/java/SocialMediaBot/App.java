@@ -14,8 +14,6 @@ import com.github.twitch4j.helix.domain.UserList;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.security.auth.login.LoginException;
 import java.nio.file.Files;
@@ -105,7 +103,7 @@ public class App {
             int viewerCount = event.getStream().getViewerCount();
 
             // obtaining the url of the profile picture
-            UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList("anhiswow")).execute();
+            UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList(streamerName)).execute();
             ArrayList<User> users = new ArrayList<>(resultList.getUsers());
             String profileIconURL = users.get(0).getProfileImageUrl();
 
