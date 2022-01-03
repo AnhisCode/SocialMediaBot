@@ -21,7 +21,6 @@ public class MediaPost {
     // post on discord when a user goes live
     public static void discordNotifyLive(String channelID, String userName, String imageURL, String title, String gameName, String profileIconURL) {
 
-        // TODO this works but make it prettier
         TextChannel channel = Commands.jda.getTextChannelById(channelID);
         EmbedBuilder streamInfo = new EmbedBuilder();
         streamInfo.setTitle("**"+userName + " is Streaming!!**", "https://www.twitch.tv/"+userName);
@@ -97,6 +96,26 @@ public class MediaPost {
 
 
     // info post about instruction
+    public static void displayInfo(TextChannel channel){
+        EmbedBuilder leaderboardInfo = new EmbedBuilder();
+        leaderboardInfo.setTitle("**:heart: Thank you for using MediaBot! :heart:**");
+        leaderboardInfo.addField("Owner Commands :person_in_tuxedo:", "```=>adduser <Twitch Username>```" +
+                "```=>removeuser <Twitch Username>```To get started as a server owner, please use **adduser** " +
+                "command in a channel the bot has access to to start monitoring a streamer. To remove a " +
+                "streamer and stop getting notified when they go live, use the **removeuser** command in the same " +
+                "channel",false);
+        leaderboardInfo.addField("User Commands :person_bowing:", "```=>leaderboard <Twitch Username>```" +
+                "Use this command to show the leaderboard of the top 10 chatters for a streamer. If all the" +
+                " entry is None, please ask the server owner to see if the streamer is monitored or the " +
+                "name is spelled correctly.\n ```=>getstarted``` Use this command to bring up this info box " +
+                "again",false);
+        leaderboardInfo.setImage("https://i.ibb.co/M5pn7Tz/Media-Bot.png");
+        leaderboardInfo.setColor(0xFFC0CB);
+        leaderboardInfo.setFooter("Bot developed by Anh :)");
 
+        channel.sendMessageEmbeds(leaderboardInfo.build()).queue();
+        leaderboardInfo.clear();
+
+    }
 
 }

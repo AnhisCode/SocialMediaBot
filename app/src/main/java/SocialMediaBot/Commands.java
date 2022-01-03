@@ -51,6 +51,12 @@ public class Commands extends ListenerAdapter {
             }
         }
 
+        // Get Started command
+        if (Objects.equals(userCommand[0], "=>getstarted")) {
+            System.out.printf("[%s][%s]%s:%s\n",serverName,textChannel.getName(),username,userMessage);
+            MediaPost.displayInfo(textChannel);
+        }
+
         if (userRaw.isOwner()) {
             // add user command
             if (Objects.equals(userCommand[0], "=>adduser")) {

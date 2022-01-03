@@ -15,6 +15,7 @@ import com.github.twitch4j.helix.domain.UserList;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
 
 import javax.security.auth.login.LoginException;
 import java.nio.file.Files;
@@ -43,6 +44,7 @@ public class App {
         }
         jda = JDABuilder.createDefault(discordToken);
         jda.setStatus(OnlineStatus.ONLINE);
+        jda.setActivity(Activity.playing("=>GetStarted"));
         jda.addEventListeners(new Commands());
         jda.build();
 
