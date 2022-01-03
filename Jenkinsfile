@@ -7,6 +7,7 @@ pipeline {
             steps {
                sh 'echo "DISCORDTOKEN=${DISCORDTOKEN}" > ./app/.env'
                sh 'echo "TWITCHTOKEN=${TWITCHTOKEN}" >> ./app/.env'
+               sh 'echo "DBLOCATION=${DBLOCATION}" >> ./app/.env'
             }
         }
         stage('Build & Deploy') {
