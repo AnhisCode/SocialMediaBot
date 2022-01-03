@@ -27,8 +27,10 @@ public class App {
 
     private static String discordToken = "";
     private static String twitchToken = "";
+    public static String dbLocation = "";
     private static TwitchClient twitchClient;
     public static JDABuilder jda;
+    public static String dbName = "monitored_channel.db";
 
     // list of channel to add
     public static ArrayList<String> channelName = new ArrayList<>();
@@ -39,6 +41,7 @@ public class App {
             Dotenv dotenv = Dotenv.load();
             discordToken = dotenv.get("DISCORDTOKEN");
             twitchToken = dotenv.get("TWITCHTOKEN");
+            dbLocation = dotenv.get("DBLOCATION");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,7 +53,7 @@ public class App {
 
         //----------DB setup----------
         // create user database
-        if (Files.notExists(Paths.get("monitored_channel.db"))) {
+        if (Files.notExists(Paths.get(dbLocation+dbName))) {
             UpdateDB.createDB();
         }
 

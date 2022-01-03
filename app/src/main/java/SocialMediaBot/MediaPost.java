@@ -1,20 +1,10 @@
 package SocialMediaBot;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.checkerframework.checker.units.qual.A;
 
-import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
 
-import static java.util.Map.Entry.*;
 
 public class MediaPost {
 

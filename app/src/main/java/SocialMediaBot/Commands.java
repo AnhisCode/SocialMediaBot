@@ -1,14 +1,12 @@
 package SocialMediaBot;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import javax.security.auth.login.LoginException;
 import java.util.Objects;
 
 public class Commands extends ListenerAdapter {
@@ -43,7 +41,7 @@ public class Commands extends ListenerAdapter {
         // leaderboard command
         if (Objects.equals(userCommand[0], "=>leaderboard")) {
             try {
-                System.out.printf("[%s][%s]%s:%s\n",serverName,textChannel.getName(),username,userMessage);
+                System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
                 String twitchUser = userCommand[1];
                 MediaPost.displayLeaderboard(textChannel, twitchUser);
             } catch (IndexOutOfBoundsException e) {
@@ -53,7 +51,7 @@ public class Commands extends ListenerAdapter {
 
         // Get Started command
         if (Objects.equals(userCommand[0], "=>getstarted")) {
-            System.out.printf("[%s][%s]%s:%s\n",serverName,textChannel.getName(),username,userMessage);
+            System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
             MediaPost.displayInfo(textChannel);
         }
 
@@ -61,7 +59,7 @@ public class Commands extends ListenerAdapter {
             // add user command
             if (Objects.equals(userCommand[0], "=>adduser")) {
                 try {
-                    System.out.printf("[%s][%s]%s:%s\n",serverName,textChannel.getName(),username,userMessage);
+                    System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.addTwitchUser(serverName, serverID, textChannel.getName(), channelID, twitchUser);
                     if (success) { // works
@@ -77,7 +75,7 @@ public class Commands extends ListenerAdapter {
             // remove user command
             if (Objects.equals(userCommand[0], "=>removeuser")) {
                 try {
-                    System.out.printf("[%s][%s]%s:%s\n",serverName,textChannel.getName(),username,userMessage);
+                    System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.removeTwitchUser(serverID, channelID, twitchUser);
                     if (success) { // works

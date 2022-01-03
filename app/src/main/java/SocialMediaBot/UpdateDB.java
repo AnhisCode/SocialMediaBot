@@ -2,13 +2,11 @@ package SocialMediaBot;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class UpdateDB {
 
-    static String url = "jdbc:sqlite:monitored_channel.db";
+    static String url = "jdbc:sqlite:" + App.dbLocation+App.dbName;
     static Connection connection = null;
 
     // creates a database if there are none

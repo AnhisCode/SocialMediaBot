@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="monitored_channel" uuid="a2f8cb59-f349-4e21-8051-0387cd01bdae">
+    <data-source source="LOCAL" name="Monitor_Channel" uuid="6a4453fd-0106-4dfe-8435-3d0f9c6b06e3">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\daoan\PersonalProjects\SocialMediaBot\app\monitored_channel.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\daoan\PersonalProjects\SocialMediaBot\app\Monitor_Channel.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>
