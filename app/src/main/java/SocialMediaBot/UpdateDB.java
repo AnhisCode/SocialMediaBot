@@ -322,7 +322,6 @@ public class UpdateDB {
                 }
             }
         } catch (Exception e) {
-            System.out.println("auhodUIOSADH");
             System.out.println("_________________________ERROR at getTwitchMonitoredUsers_________________________");
             System.err.println(e.getMessage());
         } finally {

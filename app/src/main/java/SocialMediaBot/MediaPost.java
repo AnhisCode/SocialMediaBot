@@ -14,10 +14,6 @@ public class MediaPost {
     public static void discordNotifyLive(String channelID, String userName, String imageURL, String title, String gameName, String profileIconURL, String defaultMessage) {
 
         TextChannel channel = Commands.jda.getTextChannelById(channelID);
-
-        System.out.println(channel.canTalk());
-
-        System.out.println(channel);
         EmbedBuilder streamInfo = new EmbedBuilder();
         streamInfo.setTitle("**"+userName + " is Streaming!!**", "https://www.twitch.tv/"+userName);
         streamInfo.setColor(Color.decode("0xFFC0CB"));
