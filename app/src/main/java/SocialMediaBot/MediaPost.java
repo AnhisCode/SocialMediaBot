@@ -124,7 +124,7 @@ public class MediaPost {
         displayInfo.addField("Change Colour :paintbrush:", "```=>setcolour <twitch username> <0x??????>```" +
                 "```=>setcolourall <0x??????>``` To change the colour of one streamer please use **setcolour**." +
                 "To change the colour of all streamers in a channel use **setcolourall**." +
-                "0x?????? is the hexadecimal RGB code. use https://www.rapidtables.com/web/color/RGB_Color.html\" to" +
+                " 0x?????? is the hexadecimal RGB code. use https://www.rapidtables.com/web/color/RGB_Color.html\" to" +
                 " choose colour",false);
         displayInfo.addField("Change Notification Message :speech_left:", "```=>setmessage <twitch username> " +
                 "<Message (can be longer than one word)>```" +
