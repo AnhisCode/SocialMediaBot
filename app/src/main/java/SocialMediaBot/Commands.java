@@ -29,6 +29,7 @@ public class Commands extends ListenerAdapter {
         // which text channel just got a message
         TextChannel textChannel = event.getTextChannel();
         String channelID = textChannel.getId();
+        String channelName = textChannel.getName();
 
         // which user texted
         Member userRaw = event.getMember();
@@ -55,6 +56,12 @@ public class Commands extends ListenerAdapter {
         if (Objects.equals(userCommand[0], "=>getstarted")) {
             System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
             MediaPost.displayInfo(textChannel);
+        }
+
+        // Get Started command
+        if (Objects.equals(userCommand[0], "=>customisation")) {
+            System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
+            MediaPost.displayCustomisationInfo(textChannel);
         }
 
         if (userRaw.isOwner()) {
@@ -135,6 +142,8 @@ public class Commands extends ListenerAdapter {
                     }
                     String newMessages = newMessage.toString();
                     UpdateDB.changeMessageIndividual(twitchUser, newMessages, channelID);
+                    event.getChannel().sendMessage(String.format("Message: \"%s\" set for streamer %s in channel %s",
+                            newMessages,username,channelName)).queue();
                 } catch(Exception e){
                     event.getChannel().sendMessage("Correct usage: **\"=>setmessage <twitch username> <Message (can" +
                             " be longer than one word)>\"**").queue();
@@ -151,6 +160,8 @@ public class Commands extends ListenerAdapter {
                     }
                     String newMessages = newMessage.toString();
                     UpdateDB.changeMessageAll(newMessages, channelID);
+                    event.getChannel().sendMessage(String.format("Message: \"%s\" set for all streamer in channel %s",
+                            newMessages,channelName)).queue();
                 } catch(Exception e){
                     event.getChannel().sendMessage("Correct usage: **\"=>setmessageall <Message (can" +
                             " be longer than one word)>\"**").queue();

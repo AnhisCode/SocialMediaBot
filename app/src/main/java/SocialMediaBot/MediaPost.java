@@ -104,6 +104,31 @@ public class MediaPost {
                 " entry is None, please ask the server owner to see if the streamer is monitored or the " +
                 "name is spelled correctly.\n ```=>getstarted``` Use this command to bring up this info box " +
                 "again",false);
+        displayInfo.addField("Customisation:tools:", "```=>customisation``` To change colour" +
+                " and messages of embed notification check out **customisation**. *This is for" +
+                " owners only", false);
+        displayInfo.setImage("https://i.ibb.co/M5pn7Tz/Media-Bot.png");
+        displayInfo.setColor(Color.decode("0xFFC0CB"));
+        displayInfo.setFooter("Bot developed by Anh :)");
+
+        channel.sendMessageEmbeds(displayInfo.build()).queue();
+        displayInfo.clear();
+
+    }
+
+
+    // info post about customisation
+    public static void displayCustomisationInfo(TextChannel channel){
+        EmbedBuilder displayInfo = new EmbedBuilder();
+        displayInfo.setTitle("**:tools:Customisation:tools:**");
+        displayInfo.addField("Change Colour :paintbrush:", "```=>setcolour <twitch username> <0x??????>```" +
+                "```=>setcolourall <0x??????>``` To change the colour of one streamer please use **setcolour**." +
+                "To change the colour of all streamers in a channel use **setcolourall**",false);
+        displayInfo.addField("Change Notification Message :speech_left:", "```=>setmessage <twitch username> " +
+                "<Message (can be longer than one word)>```" +
+                "```=>setmessageall <Message (can be longer than one word)>```" +
+                "To change the notification message of one streamer please use **setmessage**." +
+                "to change the notification message of all streamer in a given channel, use **setmessageall**",false);
         displayInfo.setImage("https://i.ibb.co/M5pn7Tz/Media-Bot.png");
         displayInfo.setColor(Color.decode("0xFFC0CB"));
         displayInfo.setFooter("Bot developed by Anh :)");
