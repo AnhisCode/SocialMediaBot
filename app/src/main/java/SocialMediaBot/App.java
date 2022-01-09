@@ -93,7 +93,7 @@ public class App {
             String message = event.getMessage();
 
             UpdateDB.updateStreamerDB(userName,userID,channel);
-            //System.out.println("[" + channel + "]" + userName + ": " + message);
+            System.out.println("[" + channel + "]" + userName + ": " + message);
         });
 
         // the monitored channel goes live
@@ -132,7 +132,6 @@ public class App {
                 MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName,profileIconURL,defaultMessages.get(i));
             }
 
-            System.out.printf("Channel: %s is Live! Playing %s\n%s%n", streamerName, gameName, title);
         });
 
 
