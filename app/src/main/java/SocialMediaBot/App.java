@@ -153,6 +153,7 @@ public class App {
             } catch (Exception e){
                 // doesnt exist
                 channelIDList.remove(channelID);
+                defaultEmbedColour.remove(defaultEmbedColour.get(i));
                 // removes the channel from monitored list
                 UpdateDB.removeByChannelID(channelID);
             }
@@ -178,6 +179,7 @@ public class App {
             } catch (Exception e){
                 // doesnt exist
                 channelIDList.remove(channelID);
+                defaultEmbedColour.remove(defaultEmbedColour.get(i));
                 // removes the channel from monitored list
                 UpdateDB.removeByChannelID(channelID);
             }
