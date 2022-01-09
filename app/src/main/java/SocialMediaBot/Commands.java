@@ -40,6 +40,12 @@ public class Commands extends ListenerAdapter {
         String userMessage = event.getMessage().getContentDisplay().toLowerCase();
         String[] userCommand = userMessage.split(" ");
 
+        // ok wahetevr asli
+        if (Objects.equals(userCommand[0], "=>idea")) {
+            event.getChannel().sendMessage("Yea it was ace1919191's idea ok? but this bot took me like " +
+                    "60 hours to make so please give me the credit instead otherwise im going to die - Anh").queue();
+        }
+
         // leaderboard command
         if (Objects.equals(userCommand[0], "=>leaderboard")) {
             try {
