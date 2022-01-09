@@ -80,7 +80,9 @@ public class Commands extends ListenerAdapter {
                     boolean success = UpdateDB.removeTwitchUser(serverID, channelID, twitchUser);
                     if (success) { // works
                         event.getChannel().sendMessage(String.format("User: %s removed from monitored channels", twitchUser)).queue();
-                        App.removeMonitoredUser(twitchUser);
+                        if(!UpdateDB.twitchUserExists(twitchUser)) {
+                            App.removeMonitoredUser(twitchUser);
+                        }
                     } else
                         event.getChannel().sendMessage(String.format("Unknown error has occured", twitchUser)).queue();
                 } catch (IndexOutOfBoundsException e) {

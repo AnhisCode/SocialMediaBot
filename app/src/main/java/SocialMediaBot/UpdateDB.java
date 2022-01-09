@@ -16,12 +16,13 @@ public class UpdateDB {
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS monitored_channels " +
-                    "(serverName string, serverID string, channelName string, channelID string, twitchUserName string)");
+                    "(serverName TEXT, serverID TEXT, channelName TEXT, channelID TEXT, " +
+                    "twitchUserName TEXT, embedColour TEXT, defaultMessage TEXT, mediaService TEXT)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS twitch_viewers " +
-                    "(twitchUserName string, twitchID string, messageCount int, streamerName string)");
+                    "(twitchUserName TEXT, twitchID TEXT, messageCount int, streamerName TEXT)");
             System.out.println("------------DB created------------");
         } catch (Exception e) {
-            System.out.println("_________________________ERROR_________________________");
+            System.out.println("_________________________ERROR at createDB_________________________");
             System.err.println(e.getMessage());
         } finally {
             try {
@@ -145,14 +146,15 @@ public class UpdateDB {
 
             // check if the entry already exists
             Statement statement = connection.createStatement();
-            ResultSet entries = statement.executeQuery("SELECT serverID, channelID, twitchUserName" +
+            ResultSet entries = statement.executeQuery("SELECT serverID, channelID, twitchUserName, mediaService" +
                     " FROM monitored_channels");
 
             while (entries.next()) {
                 // it does
                 if (Objects.equals(entries.getString("serverID"), serverID) &&
                         Objects.equals(entries.getString("channelID"), channelID) &&
-                        Objects.equals(entries.getString("twitchUserName"), twitchName)) {
+                        Objects.equals(entries.getString("twitchUserName"), twitchName) &&
+                        Objects.equals(entries.getString("mediaService"), "twitch")) {
                     try {
                         if (connection != null) {
                             connection.close();
@@ -165,7 +167,7 @@ public class UpdateDB {
                 }
             }
 
-            String insertStatement = "INSERT INTO monitored_channels VALUES(?,?,?,?,?)";
+            String insertStatement = "INSERT INTO monitored_channels VALUES(?,?,?,?,?,'0xFFC0CB','{default_message}','twitch')";
             PreparedStatement preparedStatement =
                     connection.prepareStatement(insertStatement);
             preparedStatement.setString(1, serverName);
@@ -189,12 +191,13 @@ public class UpdateDB {
         }
     }
 
+
     // remove user command
     public static boolean removeTwitchUser(String serverID, String channelID, String twitchName) {
         try {
             connection = DriverManager.getConnection(url);
             String insertStatement = "DELETE FROM monitored_channels WHERE serverID = ? AND " +
-                    "channelID = ? AND twitchUserName = ?";
+                    "channelID = ? AND twitchUserName = ? AND mediaService = 'twitch'";
             PreparedStatement preparedStatement =
                     connection.prepareStatement(insertStatement);
             preparedStatement.setString(1, serverID);
@@ -203,7 +206,7 @@ public class UpdateDB {
             preparedStatement.executeUpdate();
             return true;
         } catch (Exception e) {
-            System.out.println("_________________________ERROR_________________________");
+            System.out.println("_________________________ERROR at removeTwitchUser_________________________");
             System.err.println(e.getMessage());
             return false;
         } finally {
@@ -219,23 +222,16 @@ public class UpdateDB {
     }
 
 
-    // get all channelID with user
-    public static ArrayList<String> getChannelID(String userName) {
-        ArrayList<String> channelIDs = new ArrayList<>();
-
+    public static boolean twitchUserExists(String twitchName){
+        boolean exists = false;
         try {
             connection = DriverManager.getConnection(url);
-            String insertStatement = "SELECT channelID FROM monitored_channels WHERE twitchUserName = ?";
-            PreparedStatement preparedStatement =
-                    connection.prepareStatement(insertStatement);
-            preparedStatement.setString(1, userName);
-            ResultSet idList = preparedStatement.executeQuery();
-
-            while (idList.next()) {
-                channelIDs.add(idList.getString("channelID"));
-            }
+            Statement statement = connection.createStatement();
+            String insertStatement = "SELECT twitchUsername FROM monitored_channels";
+            ResultSet result = statement.executeQuery(insertStatement);
+            exists = result.next();
         } catch (Exception e) {
-            System.out.println("_________________________ERROR_________________________");
+            System.out.println("_________________________ERROR at twitchUserExists_________________________");
             System.err.println(e.getMessage());
         } finally {
             try {
@@ -247,26 +243,87 @@ public class UpdateDB {
                 System.err.println(e.getMessage());
             }
         }
-        return channelIDs;
+        return exists;
+    }
+
+
+    // remove a row based on channelID
+    public static void removeByChannelID(String channelID){
+        try {
+            connection = DriverManager.getConnection(url);
+            String insertStatement = "DELETE FROM monitored_channels WHERE channelID = ?";
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(insertStatement);
+            preparedStatement.setString(1, channelID);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("_________________________ERROR at removeByChannelID_________________________");
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
+
+    // get elements from database ordered by channelID
+    public static ArrayList<String> getElement(String userName, String element) {
+        ArrayList<String> elements = new ArrayList<>();
+
+        try {
+            connection = DriverManager.getConnection(url);
+            // make sure the order is same using "order by"
+            String insertStatement = "SELECT "+element+" FROM monitored_channels WHERE twitchUserName = ? AND mediaService = 'twitch' ORDER BY channelID";
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(insertStatement);
+            preparedStatement.setString(1, userName);
+            ResultSet idList = preparedStatement.executeQuery();
+
+            while (idList.next()) {
+                elements.add(idList.getString(String.valueOf(element)));
+            }
+        } catch (Exception e) {
+            System.out.println("_________________________ERROR at getElement: "+element+"_________________________");
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return elements;
     }
 
 
     // get all channelID with user
-    public static ArrayList<String> getMonitoredUsers() {
+    public static ArrayList<String> getTwitchMonitoredUsers() {
         ArrayList<String> monitoredUsers = new ArrayList<>();
 
         try {
             connection = DriverManager.getConnection(url);
-            String insertStatement = "SELECT twitchUserName FROM monitored_channels";
+            String insertStatement = "SELECT twitchUserName, mediaService FROM monitored_channels";
             PreparedStatement preparedStatement =
                     connection.prepareStatement(insertStatement);
             ResultSet userList = preparedStatement.executeQuery();
 
             while (userList.next()) {
-                monitoredUsers.add(userList.getString("twitchUserName"));
+                if(Objects.equals(userList.getString("mediaService"), "twitch")) {
+                    monitoredUsers.add(userList.getString("twitchUserName"));
+                }
             }
         } catch (Exception e) {
-            System.out.println("_________________________ERROR_________________________");
+            System.out.println("auhodUIOSADH");
+            System.out.println("_________________________ERROR at getTwitchMonitoredUsers_________________________");
             System.err.println(e.getMessage());
         } finally {
             try {

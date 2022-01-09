@@ -3,32 +3,40 @@ package SocialMediaBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class MediaPost {
 
     // post on discord when a user goes live
-    public static void discordNotifyLive(String channelID, String userName, String imageURL, String title, String gameName, String profileIconURL) {
+    public static void discordNotifyLive(String channelID, String userName, String imageURL, String title, String gameName, String profileIconURL, String defaultMessage) {
 
         TextChannel channel = Commands.jda.getTextChannelById(channelID);
+
+        System.out.println(channel.canTalk());
+
+        System.out.println(channel);
         EmbedBuilder streamInfo = new EmbedBuilder();
         streamInfo.setTitle("**"+userName + " is Streaming!!**", "https://www.twitch.tv/"+userName);
-        streamInfo.setColor(0xFFC0CB);
+        streamInfo.setColor(Color.decode("0xFFC0CB"));
         streamInfo.setThumbnail(profileIconURL);
         streamInfo.setImage(imageURL);
         streamInfo.addField("Game :video_game:", "Playing " + gameName, true);
         streamInfo.addField("Watch now at :tv:", "https://www.twitch.tv/"+userName, true);
         streamInfo.setDescription("**"+title+"**");
+        streamInfo.setFooter("Type: \"=>leaderboard "+userName+"\" to show twitch viewer leaderboard :)");
 
         if (channel != null) {
-            channel.sendMessage(":white_flower: Hey! @everyone :white_flower:").queue();
+            if(Objects.equals(defaultMessage, "{default_message}")) {
+                channel.sendMessage(":white_flower: Hey! @everyone :white_flower:").queue();
+            } else {
+                channel.sendMessage(defaultMessage).queue();
+            }
             channel.sendMessageEmbeds(streamInfo.build()).queue();
         }
         streamInfo.clear();
-
-        // now send the leaderboard
-        displayLeaderboard(channel, userName);
     }
 
 
@@ -37,7 +45,7 @@ public class MediaPost {
         TextChannel channel = Commands.jda.getTextChannelById(channelID);
         EmbedBuilder streamInfo = new EmbedBuilder();
         streamInfo.setTitle(":zzz:**"+userName + " Has Finished Streaming!!:zzz:**", "https://www.twitch.tv/"+userName);
-        streamInfo.setColor(0xFFC0CB);
+        streamInfo.setColor(Color.decode("0xFFC0CB"));
         streamInfo.setThumbnail(profileIconURL);
         streamInfo.setDescription("**Thank you and otsukaresama deshita "+userName+"**\n Thanks everyone for tuning in!");
         streamInfo.setFooter("Did you enjoy the stream?");
@@ -76,7 +84,7 @@ public class MediaPost {
         leaderboardInfo.addField("#2 Viewer :second_place: ", String.format("**%s** - %s messages",viewers.get(1), messageCount.get(1)), true);
         leaderboardInfo.addField("#3 Viewer :third_place:", String.format("**%s** - %s messages",viewers.get(2), messageCount.get(2)), true);
         leaderboardInfo.addField("The Rest :medal:",top4To10.toString(),false);
-        leaderboardInfo.setColor(0xFFC0CB);
+        leaderboardInfo.setColor(Color.decode("0xFFC0CB"));
         leaderboardInfo.setFooter("Type: \"=>leaderboard "+streamerName+"\" to update this leaderboard :)");
 
         channel.sendMessageEmbeds(leaderboardInfo.build()).queue();
@@ -100,7 +108,7 @@ public class MediaPost {
                 "name is spelled correctly.\n ```=>getstarted``` Use this command to bring up this info box " +
                 "again",false);
         leaderboardInfo.setImage("https://i.ibb.co/M5pn7Tz/Media-Bot.png");
-        leaderboardInfo.setColor(0xFFC0CB);
+        leaderboardInfo.setColor(Color.decode("0xFFC0CB"));
         leaderboardInfo.setFooter("Bot developed by Anh :)");
 
         channel.sendMessageEmbeds(leaderboardInfo.build()).queue();

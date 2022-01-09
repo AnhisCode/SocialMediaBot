@@ -16,8 +16,10 @@ import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.security.auth.login.LoginException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -72,7 +74,7 @@ public class App {
 
 
         // sets up the channels to monitor
-        channelName = UpdateDB.getMonitoredUsers();
+        channelName = UpdateDB.getTwitchMonitoredUsers();
         for (String channel : channelName) {
             twitchClient.getChat().joinChannel(channel);
             twitchClient.getClientHelper().enableStreamEventListener(channel);
@@ -113,10 +115,21 @@ public class App {
             ArrayList<User> users = new ArrayList<>(resultList.getUsers());
             String profileIconURL = users.get(0).getProfileImageUrl();
 
-            ArrayList<String> channelIDList = UpdateDB.getChannelID(streamerName);
+            ArrayList<String> channelIDList = UpdateDB.getElement(streamerName, "channelID");
+            ArrayList<String> defaultMessages = UpdateDB.getElement(streamerName, "defaultMessage");
 
-            for(String channelID: channelIDList){
-                MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName,profileIconURL);
+            for(int i = 0; i < channelIDList.size(); i++){
+                String channelID = channelIDList.get(i);
+                TextChannel channel = Commands.jda.getTextChannelById(channelID);
+                try {
+                    channel.canTalk();
+                } catch (Exception e){
+                    // doesnt exist
+                    channelIDList.remove(channelID);
+                    // removes the channel from monitored list
+                    UpdateDB.removeByChannelID(channelID);
+                }
+                MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName,profileIconURL,defaultMessages.get(i));
             }
 
             System.out.printf("Channel: %s is Live! Playing %s\n%s%n", streamerName, gameName, title);
@@ -135,9 +148,18 @@ public class App {
             ArrayList<User> users = new ArrayList<>(resultList.getUsers());
             String profileIconURL = users.get(0).getProfileImageUrl();
 
-            ArrayList<String> channelIDList = UpdateDB.getChannelID(streamerName);
+            ArrayList<String> channelIDList = UpdateDB.getElement(streamerName, "channelID");
 
             for(String channelID: channelIDList){
+                TextChannel channel = Commands.jda.getTextChannelById(channelID);
+                try {
+                    channel.canTalk();
+                } catch (Exception e){
+                    // doesnt exist
+                    channelIDList.remove(channelID);
+                    // removes the channel from monitored list
+                    UpdateDB.removeByChannelID(channelID);
+                }
                 MediaPost.discordNotifyOffline(channelID,streamerName,profileIconURL);
             }
 
