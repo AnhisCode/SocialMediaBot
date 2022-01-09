@@ -11,12 +11,12 @@ import java.util.Objects;
 public class MediaPost {
 
     // post on discord when a user goes live
-    public static void discordNotifyLive(String channelID, String userName, String imageURL, String title, String gameName, String profileIconURL, String defaultMessage) {
+    public static void discordNotifyLive(String channelID, String userName, String imageURL, String title, String gameName, String profileIconURL, String defaultMessage, String embedColour) {
 
         TextChannel channel = Commands.jda.getTextChannelById(channelID);
         EmbedBuilder streamInfo = new EmbedBuilder();
         streamInfo.setTitle("**"+userName + " is Streaming!!**", "https://www.twitch.tv/"+userName);
-        streamInfo.setColor(Color.decode("0xFFC0CB"));
+        streamInfo.setColor(Color.decode(embedColour));
         streamInfo.setThumbnail(profileIconURL);
         streamInfo.setImage(imageURL);
         streamInfo.addField("Game :video_game:", "Playing " + gameName, true);
@@ -37,11 +37,11 @@ public class MediaPost {
 
 
     // post on discord when a user goes offline
-    public static void discordNotifyOffline(String channelID, String userName, String profileIconURL) {
+    public static void discordNotifyOffline(String channelID, String userName, String profileIconURL, String embedColour) {
         TextChannel channel = Commands.jda.getTextChannelById(channelID);
         EmbedBuilder streamInfo = new EmbedBuilder();
         streamInfo.setTitle(":zzz:**"+userName + " Has Finished Streaming!!:zzz:**", "https://www.twitch.tv/"+userName);
-        streamInfo.setColor(Color.decode("0xFFC0CB"));
+        streamInfo.setColor(Color.decode(embedColour));
         streamInfo.setThumbnail(profileIconURL);
         streamInfo.setDescription("**Thank you and otsukaresama deshita "+userName+"**\n Thanks everyone for tuning in!");
         streamInfo.setFooter("Did you enjoy the stream?");
@@ -57,10 +57,10 @@ public class MediaPost {
 
 
     // display leaderboard
-    public static void displayLeaderboard(TextChannel channel, String streamerName){
+    public static void displayLeaderboard(TextChannel channel, String streamerName, String embedColour){
         ArrayList<ArrayList> topViewers = UpdateDB.getViewerLeaderBoard(streamerName);
-        ArrayList<String> viewers = new ArrayList<>();
-        ArrayList<Integer> messageCount = new ArrayList<>();
+        ArrayList<String> viewers;
+        ArrayList<Integer> messageCount;
 
         viewers = topViewers.get(0);
         messageCount = topViewers.get(1);
@@ -80,7 +80,7 @@ public class MediaPost {
         leaderboardInfo.addField("#2 Viewer :second_place: ", String.format("**%s** - %s messages",viewers.get(1), messageCount.get(1)), true);
         leaderboardInfo.addField("#3 Viewer :third_place:", String.format("**%s** - %s messages",viewers.get(2), messageCount.get(2)), true);
         leaderboardInfo.addField("The Rest :medal:",top4To10.toString(),false);
-        leaderboardInfo.setColor(Color.decode("0xFFC0CB"));
+        leaderboardInfo.setColor(Color.decode(embedColour));
         leaderboardInfo.setFooter("Type: \"=>leaderboard "+streamerName+"\" to update this leaderboard :)");
 
         channel.sendMessageEmbeds(leaderboardInfo.build()).queue();
@@ -91,25 +91,37 @@ public class MediaPost {
 
     // info post about instruction
     public static void displayInfo(TextChannel channel){
-        EmbedBuilder leaderboardInfo = new EmbedBuilder();
-        leaderboardInfo.setTitle("**:heart: Thank you for using MediaBot! :heart:**");
-        leaderboardInfo.addField("Owner Commands :person_in_tuxedo:", "```=>adduser <Twitch Username>```" +
+        EmbedBuilder displayInfo = new EmbedBuilder();
+        displayInfo.setTitle("**:heart: Thank you for using MediaBot! :heart:**");
+        displayInfo.addField("Owner Commands :person_in_tuxedo:", "```=>adduser <Twitch Username>```" +
                 "```=>removeuser <Twitch Username>```To get started as a server owner, please use **adduser** " +
                 "command in a channel the bot has access to to start monitoring a streamer. To remove a " +
                 "streamer and stop getting notified when they go live, use the **removeuser** command in the same " +
                 "channel",false);
-        leaderboardInfo.addField("User Commands :person_bowing:", "```=>leaderboard <Twitch Username>```" +
+        displayInfo.addField("User Commands :person_bowing:", "```=>leaderboard <Twitch Username>```" +
                 "Use this command to show the leaderboard of the top 10 chatters for a streamer. If all the" +
                 " entry is None, please ask the server owner to see if the streamer is monitored or the " +
                 "name is spelled correctly.\n ```=>getstarted``` Use this command to bring up this info box " +
                 "again",false);
-        leaderboardInfo.setImage("https://i.ibb.co/M5pn7Tz/Media-Bot.png");
-        leaderboardInfo.setColor(Color.decode("0xFFC0CB"));
-        leaderboardInfo.setFooter("Bot developed by Anh :)");
+        displayInfo.setImage("https://i.ibb.co/M5pn7Tz/Media-Bot.png");
+        displayInfo.setColor(Color.decode("0xFFC0CB"));
+        displayInfo.setFooter("Bot developed by Anh :)");
 
-        channel.sendMessageEmbeds(leaderboardInfo.build()).queue();
-        leaderboardInfo.clear();
+        channel.sendMessageEmbeds(displayInfo.build()).queue();
+        displayInfo.clear();
 
+    }
+
+
+    // show the user what colour they changed to
+    public static void displayColour(String channelID, String embedColour){
+        TextChannel channel = Commands.jda.getTextChannelById(channelID);
+        EmbedBuilder displayColourInfo = new EmbedBuilder();
+        displayColourInfo.setTitle("**Colour Changed**");
+        displayColourInfo.setColor(Color.decode(embedColour));
+
+        channel.sendMessageEmbeds(displayColourInfo.build()).queue();
+        displayColourInfo.clear();
     }
 
 }

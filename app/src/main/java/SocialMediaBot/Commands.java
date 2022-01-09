@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.awt.*;
 import java.util.Objects;
 
 public class Commands extends ListenerAdapter {
@@ -43,7 +44,8 @@ public class Commands extends ListenerAdapter {
             try {
                 System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
                 String twitchUser = userCommand[1];
-                MediaPost.displayLeaderboard(textChannel, twitchUser);
+                String embedColour = UpdateDB.getElement(twitchUser, "embedColour", channelID).get(0);
+                MediaPost.displayLeaderboard(textChannel, twitchUser, embedColour);
             } catch (IndexOutOfBoundsException e) {
                 event.getChannel().sendMessage("Please Mention a monitored twitch streamer's username").queue();
             }
@@ -59,7 +61,6 @@ public class Commands extends ListenerAdapter {
             // add user command
             if (Objects.equals(userCommand[0], "=>adduser")) {
                 try {
-                    System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.addTwitchUser(serverName, serverID, textChannel.getName(), channelID, twitchUser);
                     if (success) { // works
@@ -75,7 +76,6 @@ public class Commands extends ListenerAdapter {
             // remove user command
             if (Objects.equals(userCommand[0], "=>removeuser")) {
                 try {
-                    System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.removeTwitchUser(serverID, channelID, twitchUser);
                     if (success) { // works
@@ -89,6 +89,41 @@ public class Commands extends ListenerAdapter {
                     event.getChannel().sendMessage("Please Mention a user to remove").queue();
                 }
             }
+
+            // set colour individual
+            if(Objects.equals(userCommand[0], "=>setcolour")){
+                try{
+                    // check if enough arguments are given
+                    String twitchUser = userCommand[1];
+                    String newColour = userCommand[2];
+                    // check if format is correct
+                    Color.decode(newColour);
+                    UpdateDB.changeColourIndividual(twitchUser, newColour, channelID);
+                    MediaPost.displayColour(channelID, newColour);
+                } catch(Exception e){
+                    event.getChannel().sendMessage("Correct usage: **\"=>setcolour <twitch username> <0x??????>\"**" +
+                            " where 0x?????? is the hexadecimal RGB code." +
+                            " Hint, use https://www.rapidtables.com/web/color/RGB_Color.html\" to"+
+                            "choose colour").queue();
+                }
+            }
+
+            // set colour individual
+            if(Objects.equals(userCommand[0], "=>setcolourall")){
+                try{
+                    // check if enough arguments are given
+                    String newColour = userCommand[1];
+                    // check if format is correct
+                    Color.decode(newColour);
+                    UpdateDB.changeColourAll(newColour, channelID);
+                    MediaPost.displayColour(channelID, newColour);
+                } catch(Exception e){
+                    event.getChannel().sendMessage("Correct usage: **\"=>setcolourall <0x??????>\"**" +
+                            " where 0x?????? is the hexadecimal RGB code. Hint, use https://www.rapidtables.com/web/color/RGB_Color.html" +
+                            " to choose colour").queue();
+                }
+            }
+            System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
         }
 
     }

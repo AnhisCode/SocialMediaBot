@@ -117,6 +117,7 @@ public class App {
 
             ArrayList<String> channelIDList = UpdateDB.getElement(streamerName, "channelID");
             ArrayList<String> defaultMessages = UpdateDB.getElement(streamerName, "defaultMessage");
+            ArrayList<String> defaultEmbedColour = UpdateDB.getElement(streamerName, "embedColour");
 
             for(int i = 0; i < channelIDList.size(); i++){
                 String channelID = channelIDList.get(i);
@@ -129,7 +130,7 @@ public class App {
                     // removes the channel from monitored list
                     UpdateDB.removeByChannelID(channelID);
                 }
-                MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName,profileIconURL,defaultMessages.get(i));
+                MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName,profileIconURL,defaultMessages.get(i),defaultEmbedColour.get(i));
             }
 
         });
@@ -148,8 +149,10 @@ public class App {
             String profileIconURL = users.get(0).getProfileImageUrl();
 
             ArrayList<String> channelIDList = UpdateDB.getElement(streamerName, "channelID");
+            ArrayList<String> defaultEmbedColour = UpdateDB.getElement(streamerName, "embedColour");
 
-            for(String channelID: channelIDList){
+            for(int i = 0; i < channelIDList.size(); i++){
+                String channelID = channelIDList.get(i);
                 TextChannel channel = Commands.jda.getTextChannelById(channelID);
                 try {
                     channel.canTalk();
@@ -159,7 +162,7 @@ public class App {
                     // removes the channel from monitored list
                     UpdateDB.removeByChannelID(channelID);
                 }
-                MediaPost.discordNotifyOffline(channelID,streamerName,profileIconURL);
+                MediaPost.discordNotifyOffline(channelID,streamerName,profileIconURL,defaultEmbedColour.get(i));
             }
 
         });
