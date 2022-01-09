@@ -110,28 +110,7 @@ public class App {
             // Viewer count of the stream
             int viewerCount = event.getStream().getViewerCount();
 
-            // obtaining the url of the profile picture
-            UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList(streamerName)).execute();
-            ArrayList<User> users = new ArrayList<>(resultList.getUsers());
-            String profileIconURL = users.get(0).getProfileImageUrl();
-
-            ArrayList<String> channelIDList = UpdateDB.getElement(streamerName, "channelID");
-            ArrayList<String> defaultMessages = UpdateDB.getElement(streamerName, "defaultMessage");
-            ArrayList<String> defaultEmbedColour = UpdateDB.getElement(streamerName, "embedColour");
-
-            for(int i = 0; i < channelIDList.size(); i++){
-                String channelID = channelIDList.get(i);
-                TextChannel channel = Commands.jda.getTextChannelById(channelID);
-                try {
-                    channel.canTalk();
-                } catch (Exception e){
-                    // doesnt exist
-                    channelIDList.remove(channelID);
-                    // removes the channel from monitored list
-                    UpdateDB.removeByChannelID(channelID);
-                }
-                MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName,profileIconURL,defaultMessages.get(i),defaultEmbedColour.get(i));
-            }
+            channelGoOnline(streamerName, title, imageLink, gameName);
 
         });
 
@@ -141,30 +120,7 @@ public class App {
         {
             // name of the channel that just went live
             String streamerName = event.getChannel().getName();
-            // url of channel banner
-
-            // obtaining the url of the profile picture
-            UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList(streamerName)).execute();
-            ArrayList<User> users = new ArrayList<>(resultList.getUsers());
-            String profileIconURL = users.get(0).getProfileImageUrl();
-
-            ArrayList<String> channelIDList = UpdateDB.getElement(streamerName, "channelID");
-            ArrayList<String> defaultEmbedColour = UpdateDB.getElement(streamerName, "embedColour");
-
-            for(int i = 0; i < channelIDList.size(); i++){
-                String channelID = channelIDList.get(i);
-                TextChannel channel = Commands.jda.getTextChannelById(channelID);
-                try {
-                    channel.canTalk();
-                } catch (Exception e){
-                    // doesnt exist
-                    channelIDList.remove(channelID);
-                    // removes the channel from monitored list
-                    UpdateDB.removeByChannelID(channelID);
-                }
-                MediaPost.discordNotifyOffline(channelID,streamerName,profileIconURL,defaultEmbedColour.get(i));
-            }
-
+            channelGoOffline(streamerName);
         });
 
     }
@@ -178,6 +134,55 @@ public class App {
     public static void removeMonitoredUser(String userName){
         twitchClient.getChat().leaveChannel(userName);
         twitchClient.getClientHelper().disableStreamEventListener(userName);
+    }
+
+    public static void channelGoOffline(String streamerName){
+        // obtaining the url of the profile picture
+        UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList(streamerName)).execute();
+        ArrayList<User> users = new ArrayList<>(resultList.getUsers());
+        String profileIconURL = users.get(0).getProfileImageUrl();
+
+        ArrayList<String> channelIDList = UpdateDB.getElement(streamerName, "channelID");
+        ArrayList<String> defaultEmbedColour = UpdateDB.getElement(streamerName, "embedColour");
+
+        for(int i = 0; i < channelIDList.size(); i++){
+            String channelID = channelIDList.get(i);
+            TextChannel channel = Commands.jda.getTextChannelById(channelID);
+            try {
+                channel.canTalk();
+            } catch (Exception e){
+                // doesnt exist
+                channelIDList.remove(channelID);
+                // removes the channel from monitored list
+                UpdateDB.removeByChannelID(channelID);
+            }
+            MediaPost.discordNotifyOffline(channelID,streamerName,profileIconURL,defaultEmbedColour.get(i));
+        }
+    }
+
+    public static void channelGoOnline(String streamerName, String title, String imageLink, String gameName){
+        // obtaining the url of the profile picture
+        UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList(streamerName)).execute();
+        ArrayList<User> users = new ArrayList<>(resultList.getUsers());
+        String profileIconURL = users.get(0).getProfileImageUrl();
+
+        ArrayList<String> channelIDList = UpdateDB.getElement(streamerName, "channelID");
+        ArrayList<String> defaultMessages = UpdateDB.getElement(streamerName, "defaultMessage");
+        ArrayList<String> defaultEmbedColour = UpdateDB.getElement(streamerName, "embedColour");
+
+        for(int i = 0; i < channelIDList.size(); i++){
+            String channelID = channelIDList.get(i);
+            TextChannel channel = Commands.jda.getTextChannelById(channelID);
+            try {
+                channel.canTalk();
+            } catch (Exception e){
+                // doesnt exist
+                channelIDList.remove(channelID);
+                // removes the channel from monitored list
+                UpdateDB.removeByChannelID(channelID);
+            }
+            MediaPost.discordNotifyLive(channelID,streamerName,imageLink,title,gameName,profileIconURL,defaultMessages.get(i),defaultEmbedColour.get(i));
+        }
     }
 
 }
