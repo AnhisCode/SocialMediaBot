@@ -90,7 +90,7 @@ public class Commands extends ListenerAdapter {
                 }
             }
 
-            // set colour individual
+            // set colour for individual streamer in the channel
             if(Objects.equals(userCommand[0], "=>setcolour")){
                 try{
                     // check if enough arguments are given
@@ -108,7 +108,7 @@ public class Commands extends ListenerAdapter {
                 }
             }
 
-            // set colour individual
+            // set colour for all monitored streamers in the channel
             if(Objects.equals(userCommand[0], "=>setcolourall")){
                 try{
                     // check if enough arguments are given
@@ -123,6 +123,40 @@ public class Commands extends ListenerAdapter {
                             " to choose colour").queue();
                 }
             }
+
+            // set message for individual streamer in the channel
+            if(Objects.equals(userCommand[0], "=>setmessage")){
+                try{
+                    // check if enough arguments are given
+                    String twitchUser = userCommand[1];
+                    StringBuilder newMessage = new StringBuilder();
+                    for (int i = 2; i < userCommand.length; i++){
+                        newMessage.append(userCommand[i]).append(" ");
+                    }
+                    String newMessages = newMessage.toString();
+                    UpdateDB.changeMessageIndividual(twitchUser, newMessages, channelID);
+                } catch(Exception e){
+                    event.getChannel().sendMessage("Correct usage: **\"=>setmessage <twitch username> <Message (can" +
+                            " be longer than one word)>\"**").queue();
+                }
+            }
+
+            // set message for all streamer in the channel
+            if(Objects.equals(userCommand[0], "=>setmessageall")){
+                try{
+                    // check if enough arguments are given
+                    StringBuilder newMessage = new StringBuilder();
+                    for (int i = 1; i < userCommand.length; i++){
+                        newMessage.append(userCommand[i]).append(" ");
+                    }
+                    String newMessages = newMessage.toString();
+                    UpdateDB.changeMessageAll(newMessages, channelID);
+                } catch(Exception e){
+                    event.getChannel().sendMessage("Correct usage: **\"=>setmessageall <Message (can" +
+                            " be longer than one word)>\"**").queue();
+                }
+            }
+
             System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
         }
 

@@ -422,6 +422,60 @@ public class UpdateDB {
             }
         }
     }
+
+
+    // change default message for an individual
+    public static void changeMessageIndividual(String twitchName, String newMessage, String channelID){
+        try {
+            connection = DriverManager.getConnection(url);
+            String insertStatement = "UPDATE monitored_channels SET defaultMessage = ? WHERE twitchUserName = ? AND channelID = ?";
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(insertStatement);
+            preparedStatement.setString(1, newMessage);
+            preparedStatement.setString(2, twitchName);
+            preparedStatement.setString(3, channelID);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("_________________________ERROR at changeMessageIndividual_________________________");
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
+
+    // change message for everyone in the same channel
+    public static void changeMessageAll(String newMessage, String channelID) {
+        try {
+            connection = DriverManager.getConnection(url);
+            String insertStatement = "UPDATE monitored_channels SET defaultMessage = ? WHERE channelID = ?";
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(insertStatement);
+            preparedStatement.setString(1, newMessage);
+            preparedStatement.setString(2, channelID);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("_________________________ERROR at changeMessageAll_________________________");
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
 }
 
 

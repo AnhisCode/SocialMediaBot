@@ -11,7 +11,8 @@ import java.util.Objects;
 public class MediaPost {
 
     // post on discord when a user goes live
-    public static void discordNotifyLive(String channelID, String userName, String imageURL, String title, String gameName, String profileIconURL, String defaultMessage, String embedColour) {
+    public static void discordNotifyLive(String channelID, String userName, String imageURL,
+                                         String title, String gameName, String profileIconURL, String defaultMessage, String embedColour) {
 
         TextChannel channel = Commands.jda.getTextChannelById(channelID);
         EmbedBuilder streamInfo = new EmbedBuilder();
