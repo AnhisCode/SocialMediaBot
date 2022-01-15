@@ -72,22 +72,28 @@ public class Commands extends ListenerAdapter {
 
         if (userRaw.isOwner()) {
             // add user command
-            if (Objects.equals(userCommand[0], "=>adduser")) {
+            if (Objects.equals(userCommand[0], "=>addusert")) {
                 try {
                     String twitchUser = userCommand[1];
-                    boolean success = UpdateDB.addTwitchUser(serverName, serverID, textChannel.getName(), channelID, twitchUser);
-                    if (success) { // works
-                        event.getChannel().sendMessage(String.format("User: %s added to monitored channels", twitchUser)).queue();
-                        App.addMonitoredUser(twitchUser);
-                    } else
-                        event.getChannel().sendMessage(String.format("User may have already been set up in this text channel", twitchUser)).queue();
+                    // check if user exist
+                    if (!App.streamerExists(twitchUser)){
+                        event.getChannel().sendMessage("Streamer: "+twitchUser+" does not exist").queue();
+                    } else {
+                        boolean success = UpdateDB.addTwitchUser(serverName, serverID, textChannel.getName(), channelID, twitchUser);
+                        if (success) { // works
+                            event.getChannel().sendMessage(String.format("User: %s added to monitored channels", twitchUser)).queue();
+                            App.addMonitoredUser(twitchUser);
+                        } else {
+                            event.getChannel().sendMessage(String.format("User may have already been set up in this text channel", twitchUser)).queue();
+                        }
+                    }
                 } catch (IndexOutOfBoundsException e) {
                     event.getChannel().sendMessage("Please Mention a user to add").queue();
                 }
             }
 
             // remove user command
-            if (Objects.equals(userCommand[0], "=>removeuser")) {
+            if (Objects.equals(userCommand[0], "=>removeusert")) {
                 try {
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.removeTwitchUser(serverID, channelID, twitchUser);

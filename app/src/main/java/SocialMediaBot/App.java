@@ -174,9 +174,7 @@ public class App {
             String channelID = channelIDList.get(i);
             TextChannel channel = Commands.jda.getTextChannelById(channelID);
             try {
-                System.out.println(channelID);
                 channel.canTalk();
-                System.out.println("true");
             } catch (Exception e){
                 // doesnt exist
                 channelIDList.remove(channelID);
@@ -188,4 +186,13 @@ public class App {
         }
     }
 
+    public static boolean streamerExists(String streamerName){
+        try {
+            twitchClient.getHelix().getUsers(null, null, Arrays.asList(streamerName)).execute();
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+
+    }
 }
