@@ -111,7 +111,6 @@ public class App {
             int viewerCount = event.getStream().getViewerCount();
 
             channelGoOnline(streamerName, title, imageLink, gameName);
-
         });
 
 
@@ -175,7 +174,9 @@ public class App {
             String channelID = channelIDList.get(i);
             TextChannel channel = Commands.jda.getTextChannelById(channelID);
             try {
+                System.out.println(channelID);
                 channel.canTalk();
+                System.out.println("true");
             } catch (Exception e){
                 // doesnt exist
                 channelIDList.remove(channelID);
