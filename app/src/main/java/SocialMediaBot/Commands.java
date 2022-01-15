@@ -72,7 +72,7 @@ public class Commands extends ListenerAdapter {
 
         if (userRaw.isOwner()) {
             // add user command
-            if (Objects.equals(userCommand[0], "=>addusert")) {
+            if (Objects.equals(userCommand[0], "=>adduser")) {
                 try {
                     String twitchUser = userCommand[1];
                     // check if user exist
@@ -93,7 +93,7 @@ public class Commands extends ListenerAdapter {
             }
 
             // remove user command
-            if (Objects.equals(userCommand[0], "=>removeusert")) {
+            if (Objects.equals(userCommand[0], "=>removeuser")) {
                 try {
                     String twitchUser = userCommand[1];
                     boolean success = UpdateDB.removeTwitchUser(serverID, channelID, twitchUser);
