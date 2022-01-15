@@ -98,12 +98,11 @@ public class MediaPost {
                 "```=>removeuser <Twitch Username>```To get started as a server owner, please use **adduser** " +
                 "command in a channel the bot has access to to start monitoring a streamer. To remove a " +
                 "streamer and stop getting notified when they go live, use the **removeuser** command in the same " +
-                "channel. ``` Example: =>adduser anhiswow```",false);
+                "channel.\n ``` Example: =>adduser anhiswow```",false);
         displayInfo.addField("User Commands :person_bowing:", "```=>leaderboard <Twitch Username>```" +
                 "Use this command to show the leaderboard of the top 10 chatters for a streamer. If all the" +
                 " entry is None, please ask the server owner to see if the streamer is monitored or the " +
-                "name is spelled correctly.\n ```=>getstarted``` Use this command to bring up this info box " +
-                "again ``` Example: =>removeuser anhiswow```",false);
+                "name is spelled correctly.\n ``` Example: =>removeuser anhiswow```",false);
         displayInfo.addField("Customisation:tools:", "```=>customisation``` To change colour" +
                 " and messages of embed notification check out **customisation**. *This is for" +
                 " owners only", false);
@@ -125,12 +124,12 @@ public class MediaPost {
                 "```=>setcolourall <0x??????>``` To change the colour of one streamer please use **setcolour**." +
                 "To change the colour of all streamers in a channel use **setcolourall**." +
                 " 0x?????? is the hexadecimal RGB code. use https://www.rapidtables.com/web/color/RGB_Color.html to" +
-                " choose colour ``` Example: =>setcolour anhiswow 0xA12D45```",false);
+                " choose colour.\n ``` Example: =>setcolour anhiswow 0xA12D45```",false);
         displayInfo.addField("Change Notification Message :speech_left:", "```=>setmessage <twitch username> " +
                 "<Message (can be longer than one word)>```" +
                 "```=>setmessageall <Message (can be longer than one word)>```" +
                 "To change the notification message of one streamer please use **setmessage**. " +
-                "To change the notification message of all streamer in a given channel, use **setmessageall**. " +
+                "To change the notification message of all streamer in a given channel, use **setmessageall**.\n " +
                 "``` Example: =>setmessage anhiswow Hey @everyone, Anh is streaming!```",false);
         displayInfo.setImage("https://i.ibb.co/M5pn7Tz/Media-Bot.png");
         displayInfo.setColor(Color.decode("0xFFC0CB"));
