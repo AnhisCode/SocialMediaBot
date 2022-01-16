@@ -106,6 +106,11 @@ public class MediaPost {
         displayInfo.addField("Customisation:tools:", "```=>customisation``` To change colour" +
                 " and messages of embed notification check out **customisation**. *This is for" +
                 " owners only", false);
+        displayInfo.addField("My bot isn't working", "After you use the **adduser** command, make sure the bot" +
+                " send a message saying \"User has been added to monitored channel\", this means the bot works. " +
+                "If this message doesnt appear, please make sure the bot has enough permission to send messages and embeds in the text channel. " +
+                "If the problem persists, please give the bot admin permission over the text channel. Any further " +
+                "inquiries please contact me at Anh#4402", false);
         displayInfo.setImage("https://i.ibb.co/M5pn7Tz/Media-Bot.png");
         displayInfo.setColor(Color.decode("0xFFC0CB"));
         displayInfo.setFooter("When filling out the twitch username, please dont include the <> ");
