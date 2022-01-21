@@ -137,9 +137,7 @@ public class App {
 
     public static void channelGoOffline(String streamerName){
         // obtaining the url of the profile picture
-        UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList(streamerName)).execute();
-        ArrayList<User> users = new ArrayList<>(resultList.getUsers());
-        String profileIconURL = users.get(0).getProfileImageUrl();
+        String profileIconURL = getPlayerProfileIMG(streamerName);
 
         ArrayList<String> channelIDList = UpdateDB.getElement(streamerName, "channelID");
         ArrayList<String> defaultEmbedColour = UpdateDB.getElement(streamerName, "embedColour");
@@ -162,9 +160,7 @@ public class App {
 
     public static void channelGoOnline(String streamerName, String title, String imageLink, String gameName){
         // obtaining the url of the profile picture
-        UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList(streamerName)).execute();
-        ArrayList<User> users = new ArrayList<>(resultList.getUsers());
-        String profileIconURL = users.get(0).getProfileImageUrl();
+        String profileIconURL = getPlayerProfileIMG(streamerName);
 
         ArrayList<String> channelIDList = UpdateDB.getElement(streamerName, "channelID");
         ArrayList<String> defaultMessages = UpdateDB.getElement(streamerName, "defaultMessage");
@@ -195,4 +191,11 @@ public class App {
         }
 
     }
+
+    public static String getPlayerProfileIMG(String streamerName){
+        UserList resultList = twitchClient.getHelix().getUsers(null, null, Arrays.asList(streamerName)).execute();
+        ArrayList<User> users = new ArrayList<>(resultList.getUsers());
+        return users.get(0).getProfileImageUrl();
+    }
+
 }

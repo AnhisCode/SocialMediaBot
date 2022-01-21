@@ -10,6 +10,8 @@ import java.util.Objects;
 
 public class MediaPost {
 
+    public static String defaultColour = "0xFFC0CB";
+
     // post on discord when a user goes live
     public static void discordNotifyLive(String channelID, String userName, String imageURL,
                                          String title, String gameName, String profileIconURL, String defaultMessage, String embedColour) {
@@ -112,7 +114,7 @@ public class MediaPost {
                 "If the problem persists, please give the bot admin permission over the text channel. Any further " +
                 "inquiries please contact me at Anh#4402", false);
         displayInfo.setImage("https://i.ibb.co/M5pn7Tz/Media-Bot.png");
-        displayInfo.setColor(Color.decode("0xFFC0CB"));
+        displayInfo.setColor(Color.decode(defaultColour));
         displayInfo.setFooter("When filling out the twitch username, please dont include the <> ");
 
         channel.sendMessageEmbeds(displayInfo.build()).queue();
@@ -137,7 +139,7 @@ public class MediaPost {
                 "To change the notification message of all streamer in a given channel, use **setmessageall**.\n " +
                 "``` Example: =>setmessage anhiswow Hey @everyone, Anh is streaming!```",false);
         displayInfo.setImage("https://i.ibb.co/M5pn7Tz/Media-Bot.png");
-        displayInfo.setColor(Color.decode("0xFFC0CB"));
+        displayInfo.setColor(Color.decode(defaultColour));
         displayInfo.setFooter("Bot developed by Anh :)");
 
         channel.sendMessageEmbeds(displayInfo.build()).queue();
@@ -152,6 +154,19 @@ public class MediaPost {
         EmbedBuilder displayColourInfo = new EmbedBuilder();
         displayColourInfo.setTitle("**Colour Changed**");
         displayColourInfo.setColor(Color.decode(embedColour));
+
+        channel.sendMessageEmbeds(displayColourInfo.build()).queue();
+        displayColourInfo.clear();
+    }
+
+    // show the user what user they added
+    public static void displayAddUser(String channelID, String streamerName){
+        String profileIconURL = App.getPlayerProfileIMG(streamerName);
+        TextChannel channel = Commands.jda.getTextChannelById(channelID);
+        EmbedBuilder displayColourInfo = new EmbedBuilder();
+        displayColourInfo.setTitle("**User Added**");
+        displayColourInfo.setImage(profileIconURL);
+        displayColourInfo.setColor(Color.decode(defaultColour));
 
         channel.sendMessageEmbeds(displayColourInfo.build()).queue();
         displayColourInfo.clear();

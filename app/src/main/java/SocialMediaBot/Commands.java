@@ -83,6 +83,7 @@ public class Commands extends ListenerAdapter {
                         if (success) { // works
                             event.getChannel().sendMessage(String.format("User: %s added to monitored channels", twitchUser)).queue();
                             App.addMonitoredUser(twitchUser);
+                            MediaPost.displayAddUser(channelID, twitchUser);
                         } else {
                             event.getChannel().sendMessage(String.format("User may have already been set up in this text channel", twitchUser)).queue();
                         }
