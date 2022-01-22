@@ -2,6 +2,8 @@ package SocialMediaBot;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -163,13 +165,21 @@ public class MediaPost {
     public static void displayAddUser(String channelID, String streamerName){
         String profileIconURL = App.getPlayerProfileIMG(streamerName);
         TextChannel channel = Commands.jda.getTextChannelById(channelID);
-        EmbedBuilder displayColourInfo = new EmbedBuilder();
-        displayColourInfo.setTitle("**User Added**");
-        displayColourInfo.setImage(profileIconURL);
-        displayColourInfo.setColor(Color.decode(defaultColour));
+        EmbedBuilder addUserInfo = new EmbedBuilder();
+        addUserInfo.setTitle("**User Added**");
+        addUserInfo.setImage(profileIconURL);
+        addUserInfo.setColor(Color.decode(defaultColour));
 
-        channel.sendMessageEmbeds(displayColourInfo.build()).queue();
-        displayColourInfo.clear();
+        channel.sendMessageEmbeds(addUserInfo.build()).queue();
+        addUserInfo.clear();
     }
 
+    // log info to own channel
+    public static void logInfo(String info){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+        LocalDateTime now = LocalDateTime.now();
+        String channelID = "934336790876274718";
+        TextChannel channel = Commands.jda.getTextChannelById(channelID);
+        channel.sendMessage(info + " - " + dtf.format(now)).queue();
+    }
 }

@@ -110,6 +110,7 @@ public class App {
             // Viewer count of the stream
             int viewerCount = event.getStream().getViewerCount();
 
+            MediaPost.logInfo("Monitored Streamer " + streamerName + " went live");
             channelGoOnline(streamerName, title, imageLink, gameName);
         });
 

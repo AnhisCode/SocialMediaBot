@@ -1,9 +1,11 @@
 package SocialMediaBot;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -84,6 +86,7 @@ public class Commands extends ListenerAdapter {
                             event.getChannel().sendMessage(String.format("User: %s added to monitored channels", twitchUser)).queue();
                             App.addMonitoredUser(twitchUser);
                             MediaPost.displayAddUser(channelID, twitchUser);
+                            MediaPost.logInfo(String.format("[%s] added twitch user: %s to server %s", username, twitchUser, serverName));
                         } else {
                             event.getChannel().sendMessage(String.format("User may have already been set up in this text channel", twitchUser)).queue();
                         }
@@ -100,6 +103,7 @@ public class Commands extends ListenerAdapter {
                     boolean success = UpdateDB.removeTwitchUser(serverID, channelID, twitchUser);
                     if (success) { // works
                         event.getChannel().sendMessage(String.format("User: %s removed from monitored channels", twitchUser)).queue();
+                        MediaPost.logInfo(String.format("[%s] removed twitch user: %s in server %s", username, twitchUser, serverName));
                         if(!UpdateDB.twitchUserExists(twitchUser)) {
                             App.removeMonitoredUser(twitchUser);
                         }
@@ -120,6 +124,7 @@ public class Commands extends ListenerAdapter {
                     Color.decode(newColour);
                     UpdateDB.changeColourIndividual(twitchUser, newColour, channelID);
                     MediaPost.displayColour(channelID, newColour);
+                    MediaPost.logInfo(String.format("[%s] changed colour for twitch user: %s to %s in server %s", username, twitchUser, newColour, serverName));
                 } catch(Exception e){
                     event.getChannel().sendMessage("Correct usage: **\"=>setcolour <twitch username> <0x??????>\"**" +
                             " where 0x?????? is the hexadecimal RGB code." +
@@ -137,6 +142,7 @@ public class Commands extends ListenerAdapter {
                     Color.decode(newColour);
                     UpdateDB.changeColourAll(newColour, channelID);
                     MediaPost.displayColour(channelID, newColour);
+                    MediaPost.logInfo(String.format("[%s] changed colour for all twitch user to %s in server %s", username, newColour, serverName));
                 } catch(Exception e){
                     event.getChannel().sendMessage("Correct usage: **\"=>setcolourall <0x??????>\"**" +
                             " where 0x?????? is the hexadecimal RGB code. Hint, use https://www.rapidtables.com/web/color/RGB_Color.html" +
@@ -157,6 +163,8 @@ public class Commands extends ListenerAdapter {
                     UpdateDB.changeMessageIndividual(twitchUser, newMessages, channelID);
                     event.getChannel().sendMessage(String.format("Message: \"%s\" set for streamer %s in channel %s",
                             newMessages,username,channelName)).queue();
+                    MediaPost.logInfo(String.format("[%s] changed message for twitch user: %s in server %s", username, twitchUser, serverName));
+
                 } catch(Exception e){
                     event.getChannel().sendMessage("Correct usage: **\"=>setmessage <twitch username> <Message (can" +
                             " be longer than one word)>\"**").queue();
@@ -175,6 +183,7 @@ public class Commands extends ListenerAdapter {
                     UpdateDB.changeMessageAll(newMessages, channelID);
                     event.getChannel().sendMessage(String.format("Message: \"%s\" set for all streamer in channel %s",
                             newMessages,channelName)).queue();
+                    MediaPost.logInfo(String.format("[%s] changed message for all twitch user in server %s", username, serverName));
                 } catch(Exception e){
                     event.getChannel().sendMessage("Correct usage: **\"=>setmessageall <Message (can" +
                             " be longer than one word)>\"**").queue();
@@ -184,6 +193,12 @@ public class Commands extends ListenerAdapter {
             System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
         }
 
+    }
+
+    public void onGuildJoin(GuildJoinEvent event){
+        Guild newGuild = event.getGuild();
+        String guildName = newGuild.getName();
+        MediaPost.logInfo("Joined new server! Server name: " + guildName);
     }
 
 }
