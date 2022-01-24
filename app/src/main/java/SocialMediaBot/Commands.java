@@ -53,9 +53,15 @@ public class Commands extends ListenerAdapter {
             try {
                 System.out.printf("[%s][%s]%s:%s\n", serverName, textChannel.getName(), username, userMessage);
                 String twitchUser = userCommand[1];
-                String embedColour = UpdateDB.getElement(twitchUser, "embedColour", channelID).get(0);
+                String embedColour;
+                try {
+                    embedColour = UpdateDB.getElement(twitchUser, "embedColour", channelID).get(0);
+                } catch (IndexOutOfBoundsException e){
+                    embedColour = MediaPost.defaultColour;
+                }
                 MediaPost.displayLeaderboard(textChannel, twitchUser, embedColour);
             } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
                 event.getChannel().sendMessage("Please Mention a monitored twitch streamer's username").queue();
             }
         }
