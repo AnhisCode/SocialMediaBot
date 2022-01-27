@@ -226,7 +226,7 @@ public class UpdateDB {
         try {
             connection = DriverManager.getConnection(url);
             Statement statement = connection.createStatement();
-            String insertStatement = "SELECT twitchUserName FROM monitored_channels WHERE twitchUserName = " + twitchName;
+            String insertStatement = "SELECT twitchUserName FROM monitored_channels WHERE twitchUserName = \'" + twitchName + "\'";
             ResultSet result = statement.executeQuery(insertStatement);
             exists = result.next();
         } catch (Exception e) {

@@ -176,7 +176,7 @@ public class Commands extends ListenerAdapter {
                     String newMessages = newMessage.toString();
                     UpdateDB.changeMessageIndividual(twitchUser, newMessages, channelID);
                     event.getChannel().sendMessage(String.format("Message: \"%s\" set for streamer %s in channel %s",
-                            newMessages,username,channelName)).queue();
+                            newMessages,twitchUser,channelName)).queue();
                     MediaPost.logInfo(String.format("[%s] changed message for twitch user: %s in server %s", username, twitchUser, serverName));
 
                 } catch(Exception e){
