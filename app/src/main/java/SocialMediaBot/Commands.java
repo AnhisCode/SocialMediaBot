@@ -125,6 +125,10 @@ public class Commands extends ListenerAdapter {
                 try{
                     // check if enough arguments are given
                     String twitchUser = userCommand[1];
+                    if(!UpdateDB.twitchUserExists(twitchUser)){
+                        event.getChannel().sendMessage("Twitch streamer not found, please try again").queue();
+                        return;
+                    }
                     String newColour = userCommand[2];
                     // check if format is correct
                     Color.decode(newColour);
@@ -161,6 +165,10 @@ public class Commands extends ListenerAdapter {
                 try{
                     // check if enough arguments are given
                     String twitchUser = userCommand[1];
+                    if(!UpdateDB.twitchUserExists(twitchUser)){
+                        event.getChannel().sendMessage("Twitch streamer not found, please try again").queue();
+                        return;
+                    }
                     StringBuilder newMessage = new StringBuilder();
                     for (int i = 2; i < userCommand.length; i++){
                         newMessage.append(userCommand[i]).append(" ");
